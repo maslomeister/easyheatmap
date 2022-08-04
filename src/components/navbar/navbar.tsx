@@ -7,14 +7,14 @@ import styles from "./navbar.module.scss";
 export function Navbar() {
 	return (
 		<div className={styles.navbar}>
-			<a className={styles.logo} href="/">
+			<a className={`${styles.logo}  noselect`} href="/">
 				<Logo width={48} height={48} />
 				<span> Easy heatmap</span>
 			</a>
 			<div className={styles.menu}>
 				<NavLink
 					className={({ isActive }) =>
-						`${styles.item} ${isActive ? styles.active : ""}`
+						`${styles.item} ${isActive ? styles.active : ""} noselect`
 					}
 					to="/about"
 				>
@@ -22,7 +22,7 @@ export function Navbar() {
 				</NavLink>
 				<NavLink
 					className={({ isActive }) =>
-						`${styles.item} ${isActive ? styles.active : ""}`
+						`${styles.item} ${isActive ? styles.active : ""} noselect`
 					}
 					to="/how-to-use"
 				>
@@ -30,7 +30,7 @@ export function Navbar() {
 				</NavLink>
 				<NavLink
 					className={({ isActive }) =>
-						`${styles.item} ${isActive ? styles.active : ""}`
+						`${styles.item} ${isActive ? styles.active : ""} noselect`
 					}
 					to="/settings"
 				>

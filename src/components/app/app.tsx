@@ -21,7 +21,7 @@ export function App() {
 					<Route path="/about" element={<About />} />
 					<Route path="/how-to-use" element={<HowToUse />} />
 					<Route path="/settings" element={<Settings />} />
-					<Route path="/supportme" element={<SupportMe />} />
+					<Route path="/support-me" element={<SupportMe />} />
 				</Routes>
 			</div>
 			<Footer />
