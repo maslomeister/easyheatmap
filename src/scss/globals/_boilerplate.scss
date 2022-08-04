@@ -1,0 +1,97 @@
+/* ibm-plex-sans-200 - latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+	font-family: "IBM Plex Sans";
+	font-style: normal;
+	font-weight: 200;
+	src: local(""),
+		url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-200.woff2")
+			format("woff2"),
+		/* Chrome 26+, Opera 23+, Firefox 39+ */
+			url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-200.woff")
+			format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* ibm-plex-sans-300 - latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+	font-family: "IBM Plex Sans";
+	font-style: normal;
+	font-weight: 300;
+	src: local(""),
+		url("@assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-300.woff2")
+			format("woff2"),
+		/* Chrome 26+, Opera 23+, Firefox 39+ */
+			url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-300.woff")
+			format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* ibm-plex-sans-regular - latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+	font-family: "IBM Plex Sans";
+	font-style: normal;
+	font-weight: 400;
+	src: local(""),
+		url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-regular.woff2")
+			format("woff2"),
+		/* Chrome 26+, Opera 23+, Firefox 39+ */
+			url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-regular.woff")
+			format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* ibm-plex-sans-500 - latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+	font-family: "IBM Plex Sans";
+	font-style: normal;
+	font-weight: 500;
+	src: local(""),
+		url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-500.woff2")
+			format("woff2"),
+		/* Chrome 26+, Opera 23+, Firefox 39+ */
+			url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-500.woff")
+			format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* ibm-plex-sans-600 - latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+	font-family: "IBM Plex Sans";
+	font-style: normal;
+	font-weight: 600;
+	src: local(""),
+		url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-600.woff2")
+			format("woff2"),
+		/* Chrome 26+, Opera 23+, Firefox 39+ */
+			url("@/assets/fonts/ibm-plex-sans-v14-latin-ext_latin_cyrillic-ext_cyrillic-600.woff")
+			format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+#root {
+	height: 100vh;
+}
+
+html {
+	box-sizing: border-box;
+	font-size: 100%;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: inherit;
+}
+
+body {
+	background-color: var(--background-color);
+	color: var(--text-color);
+	font-family: "IBM Plex Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+		sans-serif;
+	margin: 0;
+	min-height: 100%;
+	padding: 0;
+	perspective: 1px;
+	transition: 1s;
+}
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	user-select: none; /* Safari */
+	user-select: none; /* Konqueror HTML */
+	user-select: none; /* Old versions of Firefox */
+	user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
