@@ -1,29 +1,25 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, {
+	useEffect,
+	useState,
+	useRef,
+	useMemo,
+	useCallback,
+} from "react";
 
 import TextareaAutosize from "react-textarea-autosize";
 
 import { getMatrixKeys } from "@/utils/matrixUtils";
-import { drawPoint, erasePoint } from "@/utils/canvasUtils";
+import {
+	drawPoint,
+	erasePoint,
+	movePointUp,
+	movePointDown,
+	movePointLeft,
+	movePointRight,
+} from "@/utils/canvasUtils";
+import { isArrowKey, movePoint } from "@/utils/helpers";
 
 import styles from "./home.module.scss";
-
-interface ITextAreaSize {
-	width: number;
-	height: number;
-}
-
-interface ICanvas {
-	width: number;
-	height: number;
-	image: string;
-}
-
-interface IMatrixToScreenTable {
-	x: number;
-	y: number;
-	keyMatrix: string;
-	[index: number]: [number, number];
-}
 
 // interface IKeyToMatrix {
 // 	clause: string;
@@ -200,7 +196,7 @@ export function Home() {
 		});
 
 		setTextRepresentation(text);
-		setNextKey(matrixKeys.matrix.shift()!);
+		setNextKey(matrixKeys.matrix[0]);
 	};
 
 	useEffect(() => {
@@ -254,13 +250,13 @@ export function Home() {
 	const removePressedOnScreenKeyToMapping = (x: number, y: number) => {
 		const key = currentKey;
 		if (colRowMatrix.length > 0 && key) {
-			const currentKeyPopped = colRowMatrix.pop()!;
+			const currentKeyPopped = colRowMatrix[colRowMatrix.length - 1];
 			setNextKey(key);
 
 			const updatedMatrixArray = [currentKeyPopped.keyMatrix, ...matrixArray];
 			setMatrixArray(updatedMatrixArray);
 
-			const previousKeyPopped = colRowMatrix.slice(-2).shift();
+			const previousKeyPopped = colRowMatrix[1];
 			if (previousKeyPopped) {
 				setCurrentKey(previousKeyPopped.keyMatrix);
 			}
@@ -383,14 +379,84 @@ export function Home() {
 	// 	};
 	// }, []);
 
-	const moveLastDrawnPoint = (event: KeyboardEvent) => {
-		console.log(event);
-		// if
-	};
+	const checkArrowPress = useCallback(
+		(event: KeyboardEvent) => {
+			const keyCode = event.code;
+
+			if (!isArrowKey(keyCode)) return;
+
+			const currentKey = colRowMatrix[colRowMatrix.length - 1];
+
+			if (!currentKey) return;
+
+			if (!canvasContext) return;
+
+			movePoint(
+				keyCode,
+				() => {
+					setColRowMatrix(
+						colRowMatrix.map((item) => {
+							if (item.keyMatrix === currentKey.keyMatrix) {
+								return { keyMatrix: item.keyMatrix, x: item.x, y: item.y - 1 };
+							}
+							return item;
+						})
+					);
+					movePointUp(canvasContext, currentKey.x, currentKey.y);
+				},
+				() => {
+					setColRowMatrix(
+						colRowMatrix.map((item) => {
+							if (item.keyMatrix === currentKey.keyMatrix) {
+								return { keyMatrix: item.keyMatrix, x: item.x, y: item.y + 1 };
+							}
+							return item;
+						})
+					);
+					movePointDown(canvasContext, currentKey.x, currentKey.y);
+				},
+				() => {
+					setColRowMatrix(
+						colRowMatrix.map((item) => {
+							if (item.keyMatrix === currentKey.keyMatrix) {
+								return {
+									keyMatrix: item.keyMatrix,
+									x: item.x - 1,
+									y: item.y,
+								};
+							}
+							return item;
+						})
+					);
+					movePointLeft(canvasContext, currentKey.x, currentKey.y);
+				},
+				() => {
+					setColRowMatrix(
+						colRowMatrix.map((item) => {
+							if (item.keyMatrix === currentKey.keyMatrix) {
+								return {
+									keyMatrix: item.keyMatrix,
+									x: item.x + 1,
+									y: item.y,
+								};
+							}
+							return item;
+						})
+					);
+					movePointRight(canvasContext, currentKey.x, currentKey.y);
+				}
+			);
+		},
+		[canvasContext, currentKey, colRowMatrix]
+	);
 
 	useEffect(() => {
-		document.addEventListener("keydwon", moveLastDrawnPoint);
-	}, []);
+		window.addEventListener("keydown", checkArrowPress);
+
+		return () => {
+			window.removeEventListener("keydown", checkArrowPress);
+		};
+	}, [canvasContext, currentKey, colRowMatrix]);
 
 	return (
 		<div
@@ -434,7 +500,7 @@ export function Home() {
 						<span style={{ color: "var(--accent-color-blue)" }}>shift</span> and
 						click on picture to remove last selected key, use{" "}
 						<span style={{ color: "var(--accent-color-blue)" }}>arrows</span> to
-						for precise control
+						to correct position
 					</p>
 				</div>
 			)}
@@ -443,7 +509,6 @@ export function Home() {
 					{!textRepresentation && (
 						<textarea
 							onChange={onInputChange}
-							onKeyDown={moveLastDrawnPoint}
 							className={styles.textarea}
 							placeholder="// Paste matrix layout outputted by 'qmk info -m' here"
 							rows={2}
