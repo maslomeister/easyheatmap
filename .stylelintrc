@@ -1,0 +1,7 @@
+{
+	"extends": ["stylelint-config-sass-guidelines", "stylelint-config-prettier"],
+	"rules": {
+		"indentation": null,
+		"number-leading-zero": null
+	}
+}

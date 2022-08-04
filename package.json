@@ -1,0 +1,38 @@
+{
+	"name": "heatmap_generator",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"heatmap-ts": "^0.0.5",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-router-dom": "^6.3.0",
+		"react-textarea-autosize": "^8.3.4",
+		"regex-parser": "^2.2.11"
+	},
+	"devDependencies": {
+		"@types/node": "^18.6.3",
+		"@types/react": "^18.0.15",
+		"@types/react-dom": "^18.0.6",
+		"@typescript-eslint/eslint-plugin": "^5.32.0",
+		"@vitejs/plugin-react": "^2.0.0",
+		"eslint": "^8.21.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"eslint-plugin-react": "^7.30.1",
+		"prettier": "^2.7.1",
+		"sass": "^1.54.1",
+		"stylelint": "^14.9.1",
+		"stylelint-config-prettier": "^9.0.3",
+		"stylelint-config-sass-guidelines": "^9.0.1",
+		"stylelint-prettier": "^2.0.0",
+		"typescript": "^4.6.4",
+		"vite": "^3.0.0"
+	}
+}
