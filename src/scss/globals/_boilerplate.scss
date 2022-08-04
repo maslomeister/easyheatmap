@@ -86,6 +86,15 @@ body {
 	transition: 1s;
 }
 
+button {
+	-webkit-touch-callout: none; /* iOS Safari */
+	user-select: none; /* Safari */
+	user-select: none; /* Konqueror HTML */
+	user-select: none; /* Old versions of Firefox */
+	user-select: none; /* Internet Explorer/Edge */
+	user-select: none;
+}
+
 .noselect {
 	-webkit-touch-callout: none; /* iOS Safari */
 	user-select: none; /* Safari */
