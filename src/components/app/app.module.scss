@@ -1,0 +1,22 @@
+.app {
+	display: flex;
+	flex-flow: column;
+	height: 100%;
+	margin: 0 auto;
+	max-width: 1280px;
+	padding: 2rem 2rem 1rem;
+	text-align: center;
+}
+
+.content {
+	flex: 1 1 auto;
+	margin: 0 auto;
+	margin-top: 64px;
+	max-width: 1000px;
+	text-align: start;
+}
+
+.logo {
+	height: 6em;
+	padding: 1.5em;
+}

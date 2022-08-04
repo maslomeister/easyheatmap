@@ -1,0 +1,29 @@
+.footer {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	padding: 0 10rem;
+}
+
+.logo {
+	align-items: center;
+	color: var(--text-color);
+	cursor: pointer;
+	display: flex;
+	font-weight: bold;
+	gap: 8px;
+	vertical-align: middle;
+}
+
+.menu {
+	align-items: center;
+	color: var(--text-color);
+	display: flex;
+	font-weight: 600;
+	gap: 16px;
+	justify-content: space-around;
+}
+
+.item {
+	color: var(--text-color);
+}

@@ -1,0 +1,32 @@
+.navbar {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+}
+
+.logo {
+	align-items: center;
+	color: var(--accent-color-white);
+	cursor: pointer;
+	display: flex;
+	font-size: 36px;
+	font-weight: bold;
+	gap: 8px;
+	vertical-align: middle;
+}
+
+.menu {
+	align-items: center;
+	display: flex;
+	font-weight: 600;
+	gap: 16px;
+	justify-content: space-around;
+}
+
+.item {
+	color: var(--text-color);
+}
+
+.active {
+	color: var(--accent-color-white);
+}
