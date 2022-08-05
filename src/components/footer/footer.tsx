@@ -8,6 +8,8 @@ export function Footer() {
 			<a
 				className={`${styles.logo} noselect`}
 				href="https://github.com/maslomeister"
+				target="_blank"
+				rel="noreferrer"
 			>
 				<span> maslomeister © 2022</span>
 			</a>
@@ -15,13 +17,15 @@ export function Footer() {
 				<a
 					className={`${styles.item} noselect`}
 					href="https://github.com/maslomeister/heatmap_generator"
+					target="_blank"
+					rel="noreferrer"
 				>
 					Github
 				</a>
-				<a className={`${styles.item} noselect`} href="/">
+				<a className={`${styles.item} noselect`} href="/" target="_blank">
 					Report bug
 				</a>
-				<a className={`${styles.item} noselect`} href="/">
+				<a className={`${styles.item} noselect`} href="/" target="_blank">
 					Suggest Feature
 				</a>
 			</div>

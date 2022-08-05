@@ -5,10 +5,12 @@ import React, {
 	useMemo,
 	useCallback,
 } from "react";
+import Papa from "papaparse";
+import HeatMap from "heatmap-ts";
 
-import TextareaAutosize from "react-textarea-autosize";
+import { useLocalStorage } from "usehooks-ts";
 
-import { getMatrixKeys } from "@/utils/matrixUtils";
+import { notEmptyLine, getMatrixKeys, processCsv } from "@/utils/matrixUtils";
 import {
 	drawPoint,
 	erasePoint,
@@ -16,40 +18,85 @@ import {
 	movePointDown,
 	movePointLeft,
 	movePointRight,
+	eraseAll,
 } from "@/utils/canvasUtils";
 import { isArrowKey, movePoint } from "@/utils/helpers";
 
 import styles from "./home.module.scss";
-
-// interface IKeyToMatrix {
-// 	clause: string;
-// 	x: number;
-// 	y: number;
-// }
+import { text } from "node:stream/consumers";
 
 const MAX_IMG_WIDTH = 1550;
 const MAX_IMG_HEIGHT = 1550;
-
-const MAX_ROW = 52;
-const MAX_COL = 52;
 
 // let rowColPointer = 0;
 // const matrixToScreenTable: IMatrixToScreenTable[] = [];
 const activeKey = { x: 0, y: 0 };
 
+// type Entries<T> = {
+// 	[K in keyof T]: [K, T[K]];
+// }[keyof T][];
+
+// const entries = <Obj,>(obj: Obj) => Object.entries(obj) as Entries<Obj>;
+
+// const mapRecordToMap = <MyString extends string>(
+// 	data: Record<
+// 		number,
+// 		{
+// 			x: number;
+// 			y: number;
+// 			value: number;
+// 			rowcol: string;
+// 		}[]
+// 	>
+// ) =>
+// 	entries(data).reduce(
+// 		(acc, [key, value]) => {
+// 			acc.set(key, new Map(value));
+// 			return acc;
+// 		},
+// 		new Map<
+// 			MyString,
+// 			Map<
+// 				number,
+// 				{
+// 					x: number;
+// 					y: number;
+// 					value: number;
+// 					rowcol: string;
+// 				}
+// 			>
+// 		>()
+// 	);
+
 export function Home() {
+	const [isConfig, setConfig] = useLocalStorage<IConfig>(
+		"config",
+		{} as IConfig
+	);
+
+	const keyboardLayerRef = useRef<HTMLDivElement>(null);
 	const brArrayRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
 	const textAreaContainerRef = useRef<HTMLDivElement>(null);
 
+	const [heatmapData, setHeatmapData] = useState<
+		Record<
+			number,
+			{
+				x: number;
+				y: number;
+				value: number;
+			}[]
+		>
+	>({});
+
 	const [imageUploadError, setImageUploadError] = useState("");
-	const [textAreaValue, setTextAreaValue] = useState("");
 	const [allowedToDrawOnImage, setAllowedToDrawOnImage] = useState(false);
 
-	const [colRowMatrix, setColRowMatrix] = useState<Array<IMatrixToScreenTable>>(
-		[]
-	);
+	const [readyToDisplayLogs, setReadyToDisplayLogs] = useState(false);
+
+	const [matrixToImage, setMatrixToImage] = useState<Array<IMatrixToImage>>([]);
 
 	const [matrixArray, setMatrixArray] = useState<Array<string>>([]);
 	const [textAreaSize, setTextAreaSize] = useState<ITextAreaSize>(
@@ -63,127 +110,88 @@ export function Home() {
 
 	const [currentKey, setCurrentKey] = useState("");
 	const [nextKey, setNextKey] = useState("");
-	// const [rowColCounter, setRowColCounter] = useState(0);
-
-	// useEffect(() => {
-	// 	if(keyToMatrixState.clause === "add"){
-	// 		setAddedKeys([...addedKeys, ])
-	// 	}
-
-	// },[keyToMatrixState])
-	// const [rowColPointer, setRowColPointer] = useState(0);
-	// const [matrixToScreenTable, setMatrixToScreenTable] = useState<
-	// 	Array<IMatrixToScreenTable>
-	// >([]);
-
-	// useEffect(() => {
-	// 	if(rowColPointer > 0)
-	// }, [rowColPointer]);
-	// const [rowColPointer, setRowColPointer] = useState(0);
-	// const nextKey = useMemo(() => {
-	// 	if (rowColPointer && addedKeys) return addedKeys[rowColPointer];
-	// 	console.log(addedKeys[rowColPointer]);
-	// }, [addedKeys]);
-
-	// useEffect(() => {
-	// 	setKeyToMatrixState([
-	// 		...keyToMatrixState,
-	// 		(keyToMatrixState[rowColCounter] = { x: activeKey.x, y: activeKey.y }),
-	// 	]);
-	// }, [rowColCounter]);
-
-	// useEffect(() => {
-	// 	if (canvasContext)
-	// 		drawPoint(
-	// 			canvasContext,
-	// 			keyToMatrixState[rowColCounter].x,
-	// 			keyToMatrixState[rowColCounter].y
-	// 		);
-	// }, [keyToMatrixState]);
+	const [heatmapPresent, setHeatmapPresent] = useState(true);
 
 	const [textRepresentation, setTextRepresentation] = useState("");
 
-	// useEffect(() => {
-	// 	console.log(brArrayRef.current?.innerHTML);
-	// }, [textRepresentation]);
+	const regularKey = (key: string) =>
+		`<span class="${styles["regular-key"]}">${key}</span>`;
 
-	// const dangerousHtml = useMemo(() => {
-	// 	if (textRepresentation) {
-	// 		console.log("set dangerous html");
-	// 		return { __html: textRepresentation };
-	// 	}
-	// }, [textRepresentation]);
-
-	// useEffect(() => {
-	// 	if (!nextKey) return;
-	// 	if (textRepresentation.match(nextKey)) {
-	// 		setTextRepresentation(
-	// 			textRepresentation.replace(
-	// 				nextKey,
-	// 				`<span class="${styles["matched-key"]}">${nextKey}</span>`
-	// 			)
-	// 		);
-	// 	}
-	// }, [nextKey]);
-
-	// useEffect(() => {
-	// 	if (!currentKey) return;
-	// 	if (
-	// 		textRepresentation.match(
-	// 			`<span class="${styles["matched-key"]}">${currentKey}</span>`
-	// 		)
-	// 	) {
-	// 		setTextRepresentation(
-	// 			textRepresentation.replace(
-	// 				`<span class="${styles["matched-key"]}">${currentKey}</span>`,
-	// 				`${currentKey}`
-	// 			)
-	// 		);
-	// 	}
-	// }, [currentKey]);
+	const matchedKey = (key: string) =>
+		`<span class="${styles["matched-key"]}">${key}</span>`;
 
 	useEffect(() => {
-		const text = textRepresentation;
+		if (heatmapData[0] && canvasContext) {
+			console.log(
+				keyboardLayerRef.current!.getElementsByClassName("heatmap-canvas")
+			);
+			for (const cnvs of keyboardLayerRef.current!.getElementsByClassName(
+				"heatmap-canvas"
+			)) {
+				cnvs.remove();
+			}
+			const heatmap = new HeatMap({
+				container: keyboardLayerRef.current!,
+				maxOpacity: 0.3,
+				radius: 50,
+				blur: 0.8,
+				width: canvasProperties.width,
+				height: canvasProperties.height,
+				gradient: {
+					// enter n keys between 0 and 1 here
+					// for gradient color customization
+					0.6: "blue",
+					0.9: "red",
+					// 0: "white",
+				},
+			});
+			// mapRecordToMap<string>(heatmapData);
 
-		const stringToFind = (key: string) =>
-			`<span class="${styles["regular-key"]}">${key}</span>`;
+			const dataPoints = heatmapData[0];
 
-		colRowMatrix.map((item) => {
-			console.log(stringToFind(item.keyMatrix));
-			// if (textRepresentation.match(nextKey)) {
-			// }
-		});
-	}, [colRowMatrix, matrixArray]);
+			heatmap.setData({ max: 14085, data: dataPoints });
+			heatmap.repaint();
+
+			console.log(heatmap);
+
+			// console.log(heatmap);
+			setHeatmapPresent(true);
+		}
+	}, [heatmapData]);
+
+	const handleChangeHeatmap = () => {
+		console.log("pressed");
+	};
 
 	useEffect(() => {
-		// console.log(canvasProperties.image);
-		// console.log(matrixArray.length);
+		if (isConfig.matrixToImage && isConfig.image) {
+			setCanvasProperties(isConfig.image);
+			setMatrixToImage(isConfig.matrixToImage);
+			setReadyToDisplayLogs(true);
+		}
+	}, []);
+
+	useEffect(() => {
 		if (
 			canvasProperties.image &&
 			matrixArray.length > 0 &&
 			textRepresentation
 		) {
 			setAllowedToDrawOnImage(true);
-			// console.log("allowedToDraew");
 		} else {
 			setAllowedToDrawOnImage(false);
 		}
-	}, [canvasProperties.image, matrixArray.length, textRepresentation]);
+	}, [canvasProperties, matrixArray, textRepresentation]);
 
 	const onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const matrixKeys = getMatrixKeys(event.target.value);
 		const textAreaVal = event.target.value;
 		if (!matrixKeys.allowed) return;
-		setTextAreaValue(textAreaVal);
 		setMatrixArray(getMatrixKeys(event.target.value).matrix);
 		resizeOnInputChange();
 
 		const lines = textAreaVal.split("\n");
-		const array = [];
-		for (let i = 0; i < lines.length; i++) {
-			array.push(lines[i]);
-		}
-		// setBrArray(array);
+
 		let text = "";
 		for (let i = 0; i < lines.length; i++) {
 			text += `<pre class="${styles["pre"]}">${lines[i]}<br></pre>`;
@@ -206,17 +214,18 @@ export function Home() {
 		if (context) {
 			setCanvasContext(context);
 		}
-	}, [canvasProperties.image]);
+	}, [canvasProperties]);
 
 	const resizeOnInputChange = () => {
 		const textAreaElem = textAreaRef.current;
+		const keyboardLayerElem = keyboardLayerRef.current;
 		const textAreaContainerElem = textAreaContainerRef.current;
-		if (!textAreaElem || !textAreaContainerElem) return;
+		if (!textAreaElem || !textAreaContainerElem || !keyboardLayerElem) return;
 
 		if (textAreaElem.scrollWidth > textAreaElem.clientWidth) {
 			textAreaElem.style.margin = "0";
 			textAreaElem.style.width = textAreaElem.scrollWidth + "px";
-			textAreaContainerElem.style.width = textAreaElem.scrollWidth + 128 + "px";
+			textAreaContainerElem.style.width = textAreaElem.scrollWidth - 50 + "px";
 		}
 
 		if (textAreaElem.scrollHeight > textAreaElem.clientHeight) {
@@ -233,8 +242,9 @@ export function Home() {
 
 	const addPressedOnScreenKeyToMapping = (x: number, y: number) => {
 		const key = matrixArray.shift();
-		if (key) {
-			setColRowMatrix([...colRowMatrix, { x, y, keyMatrix: key }]);
+		let textArea = textRepresentation;
+		if (key && canvasContext) {
+			setMatrixToImage([...matrixToImage, { x, y, keyMatrix: key }]);
 			setCurrentKey(key);
 
 			const filteredArrayOfKeys = matrixArray.filter((item) => item !== key);
@@ -242,43 +252,62 @@ export function Home() {
 
 			setMatrixArray(filteredArrayOfKeys);
 
-			setColRowMatrix([...colRowMatrix, { x, y, keyMatrix: key }]);
-			drawPoint(canvasContext!, x, y);
+			setMatrixToImage([...matrixToImage, { x, y, keyMatrix: key }]);
+			drawPoint(canvasContext, x, y);
+
+			if (textArea.match(regularKey(key))) {
+				setTextRepresentation(
+					(textArea = textArea.replace(regularKey(key), matchedKey(key)))
+				);
+			}
+
+			if (
+				filteredArrayOfKeys.slice(0, 1)[0] === undefined &&
+				matrixToImage.length > 0 &&
+				matrixArray.length === 0
+			) {
+				setConfig({
+					image: canvasProperties,
+					matrixToImage: matrixToImage,
+				});
+				setReadyToDisplayLogs(true);
+				eraseAll(
+					canvasContext,
+					canvasProperties.width,
+					canvasProperties.height
+				);
+			}
 		}
 	};
 
-	const removePressedOnScreenKeyToMapping = (x: number, y: number) => {
+	const removePressedOnScreenKeyToMapping = () => {
 		const key = currentKey;
-		if (colRowMatrix.length > 0 && key) {
-			const currentKeyPopped = colRowMatrix[colRowMatrix.length - 1];
+		let textArea = textRepresentation;
+		if (matrixToImage.length > 0 && key && canvasContext) {
+			const currentKeyPopped = matrixToImage[matrixToImage.length - 1];
 			setNextKey(key);
 
 			const updatedMatrixArray = [currentKeyPopped.keyMatrix, ...matrixArray];
 			setMatrixArray(updatedMatrixArray);
 
-			const previousKeyPopped = colRowMatrix[1];
+			const previousKeyPopped = matrixToImage[matrixToImage.length - 2];
 			if (previousKeyPopped) {
 				setCurrentKey(previousKeyPopped.keyMatrix);
 			}
 
-			// const previousKeyPopped = slice(-2).shift();
-			// if()
-			// const previousKey = colRowMatrixPopped.pop();
-			// setCurrentKey(previousKey!);
-			// const filteredArrayOfKeys = matrixArray.filter((item) => item !== key);
-			// setMatrixArray(filteredArrayOfKeys);
+			setMatrixToImage(
+				matrixToImage.filter((item) => item !== currentKeyPopped)
+			);
 
-			setColRowMatrix(colRowMatrix.filter((item) => item !== currentKeyPopped));
+			erasePoint(canvasContext, currentKeyPopped.x, currentKeyPopped.y);
 
-			erasePoint(canvasContext!, currentKeyPopped.x, currentKeyPopped.y);
+			if (textArea.match(matchedKey(key))) {
+				setTextRepresentation(
+					(textArea = textArea.replace(matchedKey(key), regularKey(key)))
+				);
+			}
 		}
 	};
-
-	// const removePressedOnScreenKeyFromMapping = (x: number, y: number) => {
-	// 	const key = nextKey;
-	// 	if (colRowMatrix.length > 0) {
-	// 	}
-	// };
 
 	const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
 		const clickX = event.nativeEvent.offsetX;
@@ -287,53 +316,8 @@ export function Home() {
 		if (!canvasContext) return;
 		if (!event.shiftKey) {
 			addPressedOnScreenKeyToMapping(clickX, clickY);
-			// setRowColPointer(rowColPointer - 1);
-			// setRowColCounter(rowColCounter - 1);
-			// activeKey.x = clickX;
-			// activeKey.y = clickY;
-			// setKeyToMatrixState({ clause: "remove", x: clickX, y: clickY });
-			// if (rowColPointer > 0) {
-			// 	// rowColPointer--;
-			// 	// setAddedKeys((prevState) =>
-			// 	// 	prevState.filter(
-			// 	// 		(prevItem) => prevItem !== matrixArray[rowColPointer]
-			// 	// 	)
-			// 	// );
-			// 	erasePoint(
-			// 		canvasContext,
-			// 		matrixToScreenTable[rowColPointer].x,
-			// 		matrixToScreenTable[rowColPointer].y
-			// 	);
-			// 	matrixToScreenTable.splice(rowColPointer, 1);
-			// 	// console.log(addedKeys);
-			// 	// document.getElementById("matrixToMatch").innerHTML = document
-			// 	// 	.getElementById("matrixToMatch")
-			// 	// 	.innerHTML.replace(
-			// 	// 		matchedRowcol,
-			// 	// 		'<span class="matchedKeys">' + matchedRowcol + "</span>"
-			// 	// 	);
-			// 	// console.log("delete at", rowColPointer);
-			// 	// console.log(matrixToScreenTable);
-			// }
 		} else {
-			removePressedOnScreenKeyToMapping(clickX, clickY); // setRowColCounter(rowColCounter + 1);
-			// activeKey.x = clickX;
-			// activeKey.y = clickY;
-			// setKeyToMatrixState({ clause: "add", x: clickX, y: clickY });
-			// if (rowColPointer < matrixArray.length) {
-			// 	matrixToScreenTable[rowColPointer] = { x: clickX, y: clickY };
-			// 	console.log(matrixToScreenTable);
-			// 	console.log("add at", rowColPointer);
-			// 	drawPoint(canvasContext, clickX, clickY);
-			// 	// rowColPointer++;
-			// 	console.log(
-			// 		brArrayRef.current?.innerHTML.replace(
-			// 			matrixArray[rowColPointer],
-			// 			`<span class=${styles["matched-key"]}>' + ${matrixArray[rowColPointer]} + '</span>`
-			// 		)
-			// 	);
-			// 	// setAddedKeys([...addedKeys, matrixArray[rowColPointer]]);
-			// 	console.log(addedKeys);
+			removePressedOnScreenKeyToMapping();
 		}
 	};
 
@@ -361,23 +345,28 @@ export function Home() {
 		fileReader.readAsDataURL(event.target.files[0]);
 	};
 
-	// const handleShiftKeyDown = (event: KeyboardEvent) => {
-	// 	console.log(event);
-	// };
+	const handleCsvFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (!event.target.files) return;
+		const reader = new FileReader();
+		const file = event.target.files[0];
 
-	// const handleShiftKeyUp = (event: KeyboardEvent) => {
-	// 	console.log(event);
-	// };
-
-	// useEffect(() => {
-	// 	document.addEventListener("keydown", handleShiftKeyDown);
-	// 	document.addEventListener("keyup", handleShiftKeyUp);
-
-	// 	return () => {
-	// 		document.removeEventListener("keydown", handleShiftKeyDown);
-	// 		document.removeEventListener("keyup", handleShiftKeyUp);
-	// 	};
-	// }, []);
+		reader.onload = () => {
+			Papa.parse<[]>(file, {
+				worker: true,
+				dynamicTyping: true,
+				skipEmptyLines: "greedy",
+				// header: true,
+				// step: function (row) {
+				// 	// console.log("Row:", row.data);
+				// },
+				complete: function (results) {
+					event.target.value = "";
+					setHeatmapData(processCsv(results.data, matrixToImage));
+				},
+			});
+		};
+		reader.readAsText(file);
+	};
 
 	const checkArrowPress = useCallback(
 		(event: KeyboardEvent) => {
@@ -385,7 +374,7 @@ export function Home() {
 
 			if (!isArrowKey(keyCode)) return;
 
-			const currentKey = colRowMatrix[colRowMatrix.length - 1];
+			const currentKey = matrixToImage[matrixToImage.length - 1];
 
 			if (!currentKey) return;
 
@@ -394,8 +383,8 @@ export function Home() {
 			movePoint(
 				keyCode,
 				() => {
-					setColRowMatrix(
-						colRowMatrix.map((item) => {
+					setMatrixToImage(
+						matrixToImage.map((item) => {
 							if (item.keyMatrix === currentKey.keyMatrix) {
 								return { keyMatrix: item.keyMatrix, x: item.x, y: item.y - 1 };
 							}
@@ -405,8 +394,8 @@ export function Home() {
 					movePointUp(canvasContext, currentKey.x, currentKey.y);
 				},
 				() => {
-					setColRowMatrix(
-						colRowMatrix.map((item) => {
+					setMatrixToImage(
+						matrixToImage.map((item) => {
 							if (item.keyMatrix === currentKey.keyMatrix) {
 								return { keyMatrix: item.keyMatrix, x: item.x, y: item.y + 1 };
 							}
@@ -416,8 +405,8 @@ export function Home() {
 					movePointDown(canvasContext, currentKey.x, currentKey.y);
 				},
 				() => {
-					setColRowMatrix(
-						colRowMatrix.map((item) => {
+					setMatrixToImage(
+						matrixToImage.map((item) => {
 							if (item.keyMatrix === currentKey.keyMatrix) {
 								return {
 									keyMatrix: item.keyMatrix,
@@ -431,8 +420,8 @@ export function Home() {
 					movePointLeft(canvasContext, currentKey.x, currentKey.y);
 				},
 				() => {
-					setColRowMatrix(
-						colRowMatrix.map((item) => {
+					setMatrixToImage(
+						matrixToImage.map((item) => {
 							if (item.keyMatrix === currentKey.keyMatrix) {
 								return {
 									keyMatrix: item.keyMatrix,
@@ -447,7 +436,7 @@ export function Home() {
 				}
 			);
 		},
-		[canvasContext, currentKey, colRowMatrix]
+		[canvasContext, currentKey, matrixToImage]
 	);
 
 	useEffect(() => {
@@ -456,12 +445,12 @@ export function Home() {
 		return () => {
 			window.removeEventListener("keydown", checkArrowPress);
 		};
-	}, [canvasContext, currentKey, colRowMatrix]);
+	}, [canvasContext, currentKey, matrixToImage]);
 
 	return (
 		<div
 			className={`${styles.home} ${
-				canvasProperties.image ? styles["home--top"] : ""
+				allowedToDrawOnImage ? styles["home--top"] : ""
 			}`}
 		>
 			<div className={styles["layout-image-container"]}>
@@ -470,6 +459,7 @@ export function Home() {
 						<input
 							type="file"
 							id="file"
+							accept=".png,.jpg"
 							className={styles.file}
 							onChange={handleFileChosen}
 						/>
@@ -477,56 +467,96 @@ export function Home() {
 					</div>
 				)}
 				{canvasProperties.width && (
-					<canvas
-						width={canvasProperties.width}
-						height={canvasProperties.height}
-						onClick={handleCanvasClick}
-						style={{
-							backgroundImage: `url(${canvasProperties.image})`,
-							backgroundPosition: "-6px -6px",
-						}}
-						ref={canvasRef}
-					/>
+					<div
+						id="keyboard-layer-id"
+						className={styles["keyboard-layer"]}
+						ref={keyboardLayerRef}
+						// style={{
+						// 	width: canvasProperties.width,
+						// 	height: canvasProperties.height,
+						// 	aspectRatio: `auto ${canvasProperties.width} / ${canvasProperties.height}`,
+						// }}
+					>
+						<canvas
+							width={canvasProperties.width}
+							height={canvasProperties.height}
+							onClick={handleCanvasClick}
+							style={{
+								backgroundImage: `url(${canvasProperties.image})`,
+								backgroundPosition: "-6px -6px",
+							}}
+							ref={canvasRef}
+						/>
+					</div>
 				)}
 			</div>
-			{textRepresentation && (
-				<div className={styles["current-key-helper"]}>
-					<p className={allowedToDrawOnImage ? "noselect" : ""}>
-						Click the key on picture that corresponds to{" "}
-						<span className={styles["active-key"]}>{nextKey}</span>
-					</p>
-					<p className={`subtext ${allowedToDrawOnImage ? "noselect" : ""}`}>
-						Hold{" "}
-						<span style={{ color: "var(--accent-color-blue)" }}>shift</span> and
-						click on picture to remove last selected key, use{" "}
-						<span style={{ color: "var(--accent-color-blue)" }}>arrows</span> to
-						to correct position
-					</p>
-				</div>
-			)}
-			<div className={styles["textarea-container"]}>
-				<div className={styles["textarea-wrapper"]} ref={textAreaContainerRef}>
-					{!textRepresentation && (
-						<textarea
-							onChange={onInputChange}
-							className={styles.textarea}
-							placeholder="// Paste matrix layout outputted by 'qmk info -m' here"
-							rows={2}
-							cols={53}
-							ref={textAreaRef}
+			{readyToDisplayLogs ? (
+				<div>
+					<div className={styles["file-input"]}>
+						<input
+							type="file"
+							id="file"
+							accept=".csv"
+							className={styles.file}
+							onChange={handleCsvFile}
 						/>
-					)}
+						<label htmlFor="file">Upload keylog file</label>
+					</div>
+				</div>
+			) : (
+				<>
 					{textRepresentation && (
-						<div
-							className={allowedToDrawOnImage ? "noselect" : ""}
-							style={{ width: textAreaSize.width, height: textAreaSize.height }}
-							ref={brArrayRef}
-							dangerouslySetInnerHTML={{ __html: textRepresentation }}
-							key={nextKey}
-						/>
+						<div className={styles["current-key-helper"]}>
+							<p className={allowedToDrawOnImage ? "noselect" : ""}>
+								Click the key on picture that corresponds to{" "}
+								<span className={styles["active-key"]}>{nextKey}</span>
+							</p>
+							<p
+								className={`subtext ${allowedToDrawOnImage ? "noselect" : ""}`}
+							>
+								Hold{" "}
+								<span style={{ color: "var(--accent-color-bright-blue)" }}>
+									shift
+								</span>{" "}
+								and click on picture to remove last selected key, use{" "}
+								<span style={{ color: "var(--accent-color-bright-blue)" }}>
+									arrows
+								</span>{" "}
+								to to correct position
+							</p>
+						</div>
 					)}
-				</div>
-			</div>
+					<div className={styles["textarea-container"]}>
+						<div
+							className={styles["textarea-wrapper"]}
+							ref={textAreaContainerRef}
+						>
+							{!textRepresentation && (
+								<textarea
+									onChange={onInputChange}
+									className={styles.textarea}
+									placeholder="// Paste matrix layout here"
+									rows={2}
+									cols={25}
+									ref={textAreaRef}
+								/>
+							)}
+							{textRepresentation && (
+								<div
+									className={allowedToDrawOnImage ? "noselect" : ""}
+									style={{
+										width: textAreaSize.width,
+										height: textAreaSize.height,
+									}}
+									ref={brArrayRef}
+									dangerouslySetInnerHTML={{ __html: textRepresentation }}
+									key={nextKey}
+								/>
+							)}
+						</div>
+					</div>
+				</>
+			)}
 		</div>
 	);
 }
