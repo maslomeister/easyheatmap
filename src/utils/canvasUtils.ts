@@ -30,6 +30,14 @@ export const erasePoint = (
 	// The above size and offsets are somewhat arbitrary and not super precise
 };
 
+export const eraseAll = (
+	ctx: CanvasRenderingContext2D,
+	width: number,
+	height: number
+) => {
+	ctx.clearRect(0, 0, width, height);
+};
+
 export const movePointUp = (
 	ctx: CanvasRenderingContext2D,
 	x: number,
