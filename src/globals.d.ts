@@ -9,9 +9,14 @@ interface ICanvas {
 	image: string;
 }
 
-interface IMatrixToScreenTable {
+interface IMatrixToImage {
 	x: number;
 	y: number;
 	keyMatrix: string;
 	[index: number]: [number, number];
+}
+
+interface IConfig {
+	matrixToImage: IMatrixToImage[];
+	image: ICanvas;
 }
