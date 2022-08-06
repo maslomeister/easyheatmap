@@ -16,7 +16,7 @@ export function Footer() {
 			<div className={styles.menu}>
 				<a
 					className={`${styles.item} noselect`}
-					href="https://github.com/maslomeister/heatmap_generator"
+					href="https://github.com/maslomeister/easyheatmap"
 					target="_blank"
 					rel="noreferrer"
 				>
