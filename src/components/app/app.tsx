@@ -3,11 +3,11 @@ import { Routes, Route } from "react-router-dom";
 import { Navbar } from "../navbar/navbar";
 import { Footer } from "../footer/footer";
 
-import { Home } from "pages/home/home";
-import { About } from "pages/about/about";
+import { Home } from "@/pages/home/home";
+import { About } from "@/pages/about/about";
 import { HowToUse } from "@/pages/how-to-use/how-to-use";
-import { Settings } from "pages/settings/settings";
-import { SupportMe } from "pages/support-me/support-me";
+import { Settings } from "@/pages/settings/settings";
+import { SupportMe } from "@/pages/support-me/support-me";
 
 import styles from "./app.module.scss";
 
