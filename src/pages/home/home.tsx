@@ -55,8 +55,8 @@ let heatmap: HeatMap;
 export function Home() {
 	const [opacity, setOpacity] = useState(1);
 	const [radius, setRadius] = useState(20);
-	const [maxOpacity, setMaxOpacity] = useState(60);
-	const [minOpacity, setMinOpacity] = useState(20);
+	const [maxOpacity, setMaxOpacity] = useState(255);
+	const [minOpacity, setMinOpacity] = useState(0);
 
 	const [currentLayer, setCurrentLayer] = useState(0);
 
@@ -138,8 +138,7 @@ export function Home() {
 
 	const [heatmapConfig, setHeatmapConfig] = useState<IHeatmapConfig>({
 		container: undefined,
-		maxOpacity: 0.9,
-		minOpacity: 0,
+		maxOpacity: 1,
 		// minOpacity: 0.05,
 		// maxOpacity: 0.6,
 		radius: 50,
@@ -161,10 +160,11 @@ export function Home() {
 			// 0.45: "pink",
 			// 0.55: "pink",
 			// 0.3: "#4a5976",
-			// 0.6: "purple",
-			// 0.8: "#a7285a",
-			0: "#a7285a",
-			1: "#4a5976",
+			// 0.5: "#4a5976",
+			0: "#4a5976",
+			1: "#a7285a",
+			// 0: "#a7285a",
+			// 1: "#4a5976",
 			// 0.2: "pink",
 			// 0.6: "purple",
 		},
@@ -526,16 +526,18 @@ export function Home() {
 							</div>
 						</>
 					)}
-					<div className={`${styles["file-input"]} noselect`}>
-						<input
-							type="file"
-							id="file"
-							accept=".csv"
-							className={styles.file}
-							onChange={handleCsvFile}
-						/>
-						<label htmlFor="file">Upload keylog file</label>
-					</div>
+					{!renderTextArea && (
+						<div className={`${styles["file-input"]} noselect`}>
+							<input
+								type="file"
+								id="file"
+								accept=".csv"
+								className={styles.file}
+								onChange={handleCsvFile}
+							/>
+							<label htmlFor="file">Upload keylog file</label>
+						</div>
+					)}
 				</>
 			)}
 			{renderTextArea && <TextMatrix />}
