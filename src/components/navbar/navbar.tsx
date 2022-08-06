@@ -9,7 +9,9 @@ export function Navbar() {
 		<div className={styles.navbar}>
 			<a className={`${styles.logo}  noselect`} href="/">
 				<Logo width={48} height={48} />
-				<span> Easy heatmap</span>
+				<div className={styles["logo-text"]}>
+					Easy heatmap <span className={styles["log-sub-text"]}>for qmk</span>
+				</div>
 			</a>
 			<div className={styles.menu}>
 				<NavLink

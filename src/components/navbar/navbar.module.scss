@@ -5,14 +5,29 @@
 }
 
 .logo {
+	align-content: center;
 	align-items: center;
 	color: var(--accent-color-white);
 	cursor: pointer;
 	display: flex;
-	font-size: 36px;
-	font-weight: bold;
+	font-size: 24px;
+	font-weight: 700;
 	gap: 8px;
+	justify-content: center;
 	vertical-align: middle;
+}
+
+.logo-text {
+	align-items: flex-end;
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	vertical-align: middle;
+}
+
+.log-sub-text {
+	color: var(--text-color);
+	font-weight: 500;
 }
 
 .menu {
