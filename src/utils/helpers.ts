@@ -1,4 +1,4 @@
-const arrowKeycodes = ["KeyI", "KeyK", "KeyJ", "KeyL"];
+const arrowKeycodes = ["KeyE", "KeyS", "KeyD", "KeyF"];
 
 export const isArrowKey = (keycode: string) => {
 	if (arrowKeycodes.includes(keycode)) return true;

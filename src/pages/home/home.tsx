@@ -337,7 +337,6 @@ export function Home() {
 	const checkArrowPress = useCallback(
 		(event: KeyboardEvent) => {
 			const keycode = event.code;
-			console.log(keycode);
 
 			if (!isArrowKey(keycode)) return;
 
