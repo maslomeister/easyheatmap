@@ -1,3 +1,46 @@
 .how-to-use {
+	padding: 0 64px;
+	text-align: start;
 	width: 100%;
+}
+
+.important {
+	color: var(--accent-color-white);
+	font-weight: 700;
+}
+
+code {
+	background-color: var(--background-color-dark);
+	padding: 4px 8px;
+}
+
+.code-multi-line {
+	display: inline-block;
+	font-size: 16px;
+	margin: 16px 0;
+	white-space: pre-wrap;
+}
+
+section {
+	padding: 48px 0;
+}
+
+section:nth-child(odd) {
+	background-color: var(--background-color);
+	box-shadow: 0 0 0 100vmax var(--background-color);
+	clip-path: inset(0 -100vmax);
+
+	code {
+		background-color: var(--background-color-dark);
+	}
+}
+
+section:nth-child(even) {
+	background-color: var(--background-color-dark);
+	box-shadow: 0 0 0 100vmax var(--background-color-dark);
+	clip-path: inset(0 -100vmax);
+
+	code {
+		background-color: var(--background-color);
+	}
 }
