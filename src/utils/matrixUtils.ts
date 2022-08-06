@@ -30,8 +30,8 @@ export const getMatrixKeys = (matrix: string) => {
 
 export const processCsv = (
 	data: (string | number)[][],
-	matrixToImage: IMatrixToImage[]
-) => {
+	matrixImageMapping: IMatrixImageMapping[]
+): Record<number, IHeatMapData> => {
 	let layersAmount = 0;
 	const keyFreq: Record<string, number[]> = {};
 	// const keyCode = data[0][0];
@@ -90,30 +90,30 @@ export const processCsv = (
 
 		// keyFreq[rowcol][layer] = (keyFreq[rowcol][layer] || 0) + 1;
 	}
-	console.log(keyFreq);
+	// console.log(keyFreq);
 
-	const keyPressesTotal = [];
+	const layerTotalKeyPresses = [];
 
 	const keyPressOnLayer = Object.values(keyFreq);
 
 	for (let i = 0; i <= layersAmount; i++) {
-		keyPressesTotal.push(
+		layerTotalKeyPresses.push(
 			Math.max(
 				...keyPressOnLayer.map((pressesInLayer) => pressesInLayer[i] || 0)
 			)
 		);
 	}
 
-	keyPressesTotal.push(
+	layerTotalKeyPresses.push(
 		Math.max(
 			...keyPressOnLayer.map((pressesInLayer) => reduceSum(pressesInLayer))
 		)
 	);
 
-	// console.log(keyPressesTotal);
+	// console.log(layerTotalKeyPresses);
 
 	// console.log(matrixToImage);
-	const rowCols = matrixToImage.map((item) => item.keyMatrix);
+	const rowCols = matrixImageMapping.map((item) => item.keycode);
 	// console.log(keyFreq);
 	// console.log(rowCols);
 	// (Object.keys(matrixToImage) as (keyof typeof matrixToImage)[]).find((key) => {
@@ -126,6 +126,7 @@ export const processCsv = (
 	const heatmapData: Record<number, { x: number; y: number; value: number }[]> =
 		[];
 
+	const rowcols = Object.keys(rowCols);
 	let i = rowCols.length;
 	while (i--) {
 		const rowcol = rowCols[i];
@@ -140,8 +141,8 @@ export const processCsv = (
 				continue;
 			}
 
-			const { x, y } = matrixToImage.filter(
-				(item) => item.keyMatrix === rowcol
+			const { x, y } = matrixImageMapping.filter(
+				(item) => item.keycode === rowcol
 			)[0];
 			if (heatmapData[j] === undefined) heatmapData[j] = [];
 
@@ -149,9 +150,7 @@ export const processCsv = (
 		}
 		// console.log(data);
 
-		// const totalKeypressesCount = reduceSum(keyFreq[rowcol]);
-		// console.log(keyFreq[rowcol]);
-		// const coordsAndValue = { ...keyFreq[rowcol] };
+		// console.log(i);
 		// console.log(coordsAndValue);
 		// console.log(coordsAndValue);
 		// coordsAndValue = totalKeypressesCount;
@@ -160,6 +159,31 @@ export const processCsv = (
 		// }
 		// heatMapData[layersAmount + 1].push(coordsAndValue);
 	}
+	const resultData: Record<number, IHeatMapData> = [];
+	for (let i = 0; i <= layersAmount; i++) {
+		if (resultData[i] == undefined) {
+			resultData[i] = {
+				maxKeyPresses: layerTotalKeyPresses[i],
+				dataPoints: heatmapData[i],
+			};
+		}
+	}
+	const keys: number[] = Object.keys(resultData).map(Number);
+	const allKeyPresses = keys.reduce((prevVal, currentValue, index) => {
+		return (prevVal += resultData[index].maxKeyPresses);
+	}, 0);
+	console.log(allKeyPresses);
+	// const allLayersPresses = reduceSum(keyFreq[rowcols]);
+	// // console.log(keyFreq[rowcol]);
+	// const coordsAndValue = { ...keyFreq[rowcols] };
+	// if (resultData[layersAmount + 1] == undefined) {
+	// 	resultData[layersAmount + 1] = {
+	// 		maxKeyPresses: allLayersPresses,
+	// 		dataPoints: coordsAndValue,
+	// 	};
+	// }
 
-	return heatmapData;
+	// console.log(resultData);
+
+	return resultData;
 };
