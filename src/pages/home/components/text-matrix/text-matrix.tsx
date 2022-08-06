@@ -87,7 +87,7 @@ export function TextMatrix() {
 					<p className="subtext noselect">
 						Hold <span className={styles["highlighted-text"]}> shift </span> and
 						click on picture to remove last selected key, use
-						<span className={styles["highlighted-text"]}> arrows </span> to to
+						<span className={styles["highlighted-text"]}> IJKL </span> to to
 						correct position
 					</p>
 				</div>
