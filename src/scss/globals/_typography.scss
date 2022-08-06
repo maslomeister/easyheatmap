@@ -11,13 +11,14 @@ h1 {
 	font-size: 36px;
 }
 
-p {
-	font-size: 20px;
-	margin-top: 0;
+h2 {
+	font-size: 28px;
 }
 
-a:hover {
-	color: var(--accent-color-white);
+p {
+	font-size: 20px;
+	font-weight: 500;
+	margin-top: 0;
 }
 
 a,
@@ -26,8 +27,13 @@ a:active {
 	text-decoration: none;
 }
 
+a:hover {
+	color: var(--accent-color-white);
+}
+
 .subtext {
 	color: var(--text-color);
 	font-size: 16px;
+	font-weight: 300;
 	opacity: 0.9;
 }
