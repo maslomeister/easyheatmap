@@ -98,9 +98,9 @@ export function TextMatrix() {
 						<textarea
 							onChange={handleInputChange}
 							className={styles.textarea}
-							placeholder="// Paste matrix layout here"
+							placeholder="// Paste qmk info -kb <name> -m results here"
 							rows={2}
-							cols={25}
+							cols={42}
 							ref={textAreaRef}
 						/>
 					)}
