@@ -55,15 +55,21 @@
 
 .controls {
 	display: flex;
-	gap: 16px;
+	gap: 24px;
 	margin-bottom: 24px;
 	margin-top: 24px;
 }
 
+.text__items {
+	display: flex;
+	gap: 24px;
+	justify-content: space-between;
+}
+
 .item {
 	flex: 1 1 0;
-	min-width: 120px;
-	text-align: center;
+	min-width: 230px;
+	text-align: start;
 }
 
 p {
