@@ -229,19 +229,19 @@ export function ImageLayout({
 					}}
 				>
 					<div
-						className={styles["canvas_centered"]}
+						className={styles["canvas--centered"]}
 						// className={styles["canvases-container"]}
 						style={{
 							width: keyboardImage.width + 200,
 							height: keyboardImage.height + 200,
-							pointerEvents: "none",
+							// pointerEvents: "none",
 						}}
 						onClick={handleMouseClick}
 						ref={keyboardOverlayRef}
 						// key={heatmapLoaded}
 					>
 						<canvas
-							className={styles["canvas_centered"]}
+							className={styles["canvas--centered"]}
 							width={keyboardImage.width + 200}
 							height={keyboardImage.height + 200}
 							style={{
@@ -250,7 +250,7 @@ export function ImageLayout({
 							ref={keyboardImageRef}
 						/>
 						<canvas
-							className={styles["canvas_centered"]}
+							className={styles["canvas--centered"]}
 							width={keyboardImage.width}
 							height={keyboardImage.height}
 							style={{
