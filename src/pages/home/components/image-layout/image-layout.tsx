@@ -33,6 +33,7 @@ type Props = {
 	setCanvasContext: (canvasContext: CanvasRenderingContext2D) => void;
 	setConfig: (config: IConfig) => void;
 	keyboardOverlayRef: React.RefObject<HTMLDivElement>;
+
 	updateHeatmapConfig: (
 		HTMLDivElement: HTMLDivElement,
 		width: number,
@@ -144,7 +145,11 @@ export function ImageLayout({
 					matrixImageMapping,
 				});
 				dispatch(setSetupState("logfileUpload"));
-				eraseAll(canvasContext, keyboardImage.width, keyboardImage.height);
+				eraseAll(
+					canvasContext,
+					keyboardImage.width + 200,
+					keyboardImage.height + 200
+				);
 			}
 		}
 	};
@@ -189,6 +194,7 @@ export function ImageLayout({
 	};
 
 	const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		if (setupState !== "imageUpload") return;
 		// console.log(event);
 		const clickX = event.nativeEvent.offsetX;
 		const clickY = event.nativeEvent.offsetY;
@@ -199,29 +205,6 @@ export function ImageLayout({
 			removePressedOnScreenKeyToMapping();
 		}
 	};
-
-	// const handleCsvFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-	// 	if (!event.target.files) return;
-	// 	const reader = new FileReader();
-	// 	const file = event.target.files[0];
-
-	// 	reader.onload = () => {
-	// 		Papa.parse<[]>(file, {
-	// 			worker: true,
-	// 			dynamicTyping: true,
-	// 			skipEmptyLines: "greedy",
-	// 			// header: true,
-	// 			// step: function (row) {
-	// 			// 	// console.log("Row:", row.data);
-	// 			// },
-	// 			complete: function (results) {
-	// 				event.target.value = "";
-	// 				setHeatmapData(processCsv(results.data, matrixImageMapping));
-	// 			},
-	// 		});
-	// 	};
-	// 	reader.readAsText(file);
-	// };
 
 	return (
 		<div className={styles["layout-image-container"]}>
@@ -239,45 +222,45 @@ export function ImageLayout({
 			)}
 			{keyboardImage.src && (
 				<div
-					id="keyboard-layer-id"
-					onClick={setupState === "imageUpload" ? handleMouseClick : undefined}
-					className={styles["keyboard-layer"]}
-					ref={keyboardOverlayRef}
+					className={styles["keyboard__layer"]}
 					style={{
-						width: keyboardImage.width + 200,
-						height: keyboardImage.height + 100,
+						width: keyboardImage.width,
+						height: keyboardImage.height,
 					}}
 				>
-					<canvas
-						width={keyboardImage.width + 200}
-						height={keyboardImage.height + 100}
+					<div
+						className={styles["canvas_centered"]}
+						// className={styles["canvases-container"]}
 						style={{
-							// backgroundImage: `url(${keyboardImage.src})`,
-							// backgroundImage: `url(${keyboardImage.src})`,
-							// backgroundPosition: "-6px -6px",
-							position: "absolute",
-							left: "50%",
-							top: "50%",
-							transform: "translateX(-50%) translateY(-50%)",
-							zIndex: "1",
-							// pointerEvents: "none",
-						}}
-						ref={keyboardImageRef}
-					/>
-					<canvas
-						width={keyboardImage.width}
-						height={keyboardImage.height}
-						style={{
-							backgroundImage: `url(${keyboardImage.src})`,
-							backgroundPosition: "-6px -6px",
-							position: "absolute",
-							left: "50%",
-							top: "50%",
-							transform: "translateX(-50%) translateY(-50%)",
-							zIndex: "0",
+							width: keyboardImage.width + 200,
+							height: keyboardImage.height + 200,
 							pointerEvents: "none",
 						}}
-					/>
+						onClick={handleMouseClick}
+						ref={keyboardOverlayRef}
+						// key={heatmapLoaded}
+					>
+						<canvas
+							className={styles["canvas_centered"]}
+							width={keyboardImage.width + 200}
+							height={keyboardImage.height + 200}
+							style={{
+								zIndex: "1",
+							}}
+							ref={keyboardImageRef}
+						/>
+						<canvas
+							className={styles["canvas_centered"]}
+							width={keyboardImage.width}
+							height={keyboardImage.height}
+							style={{
+								backgroundImage: `url(${keyboardImage.src})`,
+								backgroundPosition: "-6px -6px",
+								zIndex: "0",
+								pointerEvents: "none",
+							}}
+						/>
+					</div>
 				</div>
 			)}
 		</div>
