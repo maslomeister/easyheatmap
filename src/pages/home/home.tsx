@@ -172,7 +172,12 @@ export function Home() {
 	}, [heatmapInit]);
 
 	useEffect(() => {
-		if (heatmap && heatmapData[heatmapSettings.currentLayer]) {
+		if (
+			heatmap &&
+			heatmapData[heatmapSettings.currentLayer] &&
+			heatmapSettings
+		) {
+			setConfig({ ...isConfig, heatmapSettings });
 			heatmap.store.radius = heatmapSettings.radius;
 			heatmap.renderer.canvas.style.opacity =
 				heatmapSettings.opacity.toString();
