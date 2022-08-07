@@ -9,13 +9,6 @@ import Papa from "papaparse";
 import HeatMap from "heatmap-ts";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-// import { styled } from "@mui/material/styles";
-// import Slider from "@mui/material/Slider";
-// import Box from "@mui/material/Box";
-// import InputLabel from "@mui/material/InputLabel";
-// import MenuItem from "@mui/material/MenuItem";
-// import FormControl from "@mui/material/FormControl";
-// import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useLocalStorage } from "usehooks-ts";
 
 import { useAppDispatch, useAppSelector } from "@/services/hooks";
@@ -43,236 +36,189 @@ import {
 	movePointRight,
 	eraseAll,
 } from "@/utils/canvasUtils";
-import { isArrowKey, movePoint } from "@/utils/helpers";
+import { isArrowKey, movePoint, scaleNumber } from "@/utils/helpers";
+
+import {
+	DEFAULT_RADIUS,
+	DEFAULT_OPACITY,
+	DEFAULT_MAX_OPACITY,
+} from "@/constants/constants";
 
 import { ImageLayout } from "./components/image-layout/image-layout";
 import { TextMatrix } from "./components/text-matrix/text-matrix";
 
 import styles from "./home.module.scss";
 
-let heatmap: HeatMap;
+// let heatmap: HeatMap;
+
+function SimpleSlider({
+	min,
+	max,
+	step = 1,
+	value,
+	onChange,
+}: {
+	min: number;
+	max: number;
+	step?: number;
+	value: number;
+	onChange: (value: number) => void;
+}) {
+	const handleValue = (value: number | number[]) => {
+		if (typeof value === "number") {
+			onChange(value);
+		}
+	};
+
+	return (
+		<Slider
+			min={min}
+			max={max}
+			step={step}
+			value={value}
+			onChange={handleValue}
+			handleStyle={{
+				height: 18,
+				width: 18,
+				backgroundColor: "#5071b4",
+				opacity: 1,
+				border: 0,
+			}}
+			trackStyle={{
+				background: "#4a5976",
+			}}
+			railStyle={{
+				background: "#272727",
+			}}
+		/>
+	);
+}
 
 export function Home() {
-	const [opacity, setOpacity] = useState(1);
-	const [radius, setRadius] = useState(20);
-	const [maxOpacity, setMaxOpacity] = useState(255);
-	const [minOpacity, setMinOpacity] = useState(0);
-
-	const [currentLayer, setCurrentLayer] = useState(0);
-
-	const handleLayer = (value: number | number[]) => {
-		if (typeof value === "number") {
-			setCurrentLayer(value);
-		}
-	};
-
-	const handleRaidus = (value: number | number[]) => {
-		if (typeof value === "number") {
-			setRadius(value);
-		}
-	};
-
-	const handleOpacity = (value: number | number[]) => {
-		if (typeof value === "number") {
-			setOpacity(value);
-		}
-	};
-
-	const handleMaxOpacity = (value: number | number[]) => {
-		if (typeof value === "number") {
-			setMaxOpacity(value);
-		}
-	};
-
-	const handleMinOpacity = (value: number | number[]) => {
-		if (typeof value === "number") {
-			setMinOpacity(value);
-		}
-	};
-
-	const [layer, setLayer] = React.useState("");
-
-	const handleLayerChange = (event: any) => {
-		setLayer(event.target.value as string);
-	};
-
 	const keyboardOverlayRef = useRef<HTMLDivElement>(null);
+
+	const [heatmap, setHeatmap] = useState<HeatMap>();
+
+	const [heatmapSettings, setHeatmapSettings] = useState<IHeatmapSettings>({
+		radius: DEFAULT_RADIUS,
+		opacity: DEFAULT_OPACITY,
+		maxOpacity: DEFAULT_MAX_OPACITY,
+	} as IHeatmapSettings);
+
+	const [heatmapInit, setHeatmapInit] = useState<{
+		container: HTMLDivElement;
+		width: number;
+		height: number;
+	}>();
+
 	const [isConfig, setConfig] = useLocalStorage<IConfig>(
 		"config",
 		{} as IConfig
 	);
 
 	const dispatch = useAppDispatch();
-	const {
-		currentKey,
-		keyboardImage,
-		textRepresentation,
-		setupState,
-		matrixImageMapping,
-	} = useAppSelector((state) => state.setup);
+	const { currentKey, setupState, matrixImageMapping } = useAppSelector(
+		(state) => state.setup
+	);
 
-	// const CustomSlider = styled(Slider)(({ theme }) => ({
-	// 	color: "#4a5a75", //color of the slider between thumbs
-	// 	"& .MuiSlider-thumb": {
-	// 		backgroundColor: "#4a5a75", //color of thumbs
-	// 	},
-	// 	"& .MuiSlider-rail": {
-	// 		color: "#272727", ////color of the slider outside  teh area between thumbs
-	// 	},
-	// }));
+	const handleLayer = (value: number) => {
+		setHeatmapSettings((state) => ({
+			...state,
+			currentLayer: value,
+		}));
+	};
 
-	// const keyboardOverlayRef = useRef<HTMLDivElement>(null);
+	const handleRadius = (value: number) => {
+		setHeatmapSettings((state) => ({
+			...state,
+			radius: value,
+		}));
+	};
 
-	// const keyboardLayerRef = useRef<HTMLDivElement>(null);
-	// const canvasRef = useRef<HTMLCanvasElement>(null);
-	// const textAreaRef = useRef<HTMLTextAreaElement>(null);
-	// const textAreaContainerRef = useRef<HTMLDivElement>(null);
+	const handleOpacity = (value: number) => {
+		setHeatmapSettings((state) => ({
+			...state,
+			opacity: value,
+		}));
+	};
+
+	const handleMaxOpacity = (value: number) => {
+		setHeatmapSettings((state) => ({
+			...state,
+			maxOpacity: value,
+		}));
+	};
 
 	const [canvasContext, setCanvasContext] =
 		useState<CanvasRenderingContext2D>();
 
-	// const setCanvasContext = (context: CanvasRenderingContext2D) => {
-	// 	// console.log(context);
-	// 	setCanvasContextState(context);
-	// };
+	const [heatmapData, setHeatmapData] = useState<IHeatMapData[]>([]);
 
-	const [heatmapConfig, setHeatmapConfig] = useState<IHeatmapConfig>({
-		container: undefined,
-		maxOpacity: 1,
-		// minOpacity: 0.05,
-		// maxOpacity: 0.6,
-		radius: 50,
-		blur: 1,
-		width: 0,
-		height: 0,
-		gradient: {
-			// enter n keys between 0 and 1 here
-			// for gradient color customization
-			// 0.9: "red",
-			// 0.1: "green",
-			// 0.21: "blue",
-			// 0.1: "red",
-			// 0.1: "black",
-			// 0.4: "pink",
-			// 1: "purple",
-			// 0: "black",
-			// 0.8: "pink",
-			// 0.45: "pink",
-			// 0.55: "pink",
-			// 0.3: "#4a5976",
-			// 0.5: "#4a5976",
-			0: "#4a5976",
-			1: "#a7285a",
-			// 0: "#a7285a",
-			// 1: "#4a5976",
-			// 0.2: "pink",
-			// 0.6: "purple",
-		},
-	});
-	const [heatmapData, setHeatmapData] = useState<Record<number, IHeatMapData>>(
-		{}
-	);
+	// init heatmapjs
+	useEffect(() => {
+		if (!heatmap && heatmapInit) {
+			setHeatmap(
+				new HeatMap({
+					container: heatmapInit.container,
+					width: heatmapInit.width,
+					height: heatmapInit.height,
+					gradient: {
+						0.1: "pink",
+						0.8: "purple",
+					},
+				})
+			);
+		}
+	}, [heatmapInit]);
 
 	useEffect(() => {
-		if (heatmap) {
-			heatmap.store.radius = radius;
+		if (heatmap && heatmapData[heatmapSettings.currentLayer]) {
+			heatmap.store.radius = heatmapSettings.radius;
+			heatmap.renderer.canvas.style.opacity =
+				heatmapSettings.opacity.toString();
+			heatmap.renderer.maxOpacity = scaleNumber(
+				heatmapSettings.maxOpacity,
+				0,
+				1,
+				0,
+				255
+			);
+
+			heatmap.renderer._updateGradient({
+				...heatmap.config,
+				gradient: heatmapSettings.gradient,
+			});
+			// heatmap.config.gradient = heatmapSettings.colors;
+
 			heatmap.setData({
-				max: heatmapData[currentLayer].maxKeyPresses,
-				data: heatmapData[currentLayer].dataPoints,
+				max: heatmapData[heatmapSettings.currentLayer].maxKeyPresses,
+				data: heatmapData[heatmapSettings.currentLayer].dataPoints,
 			});
 		}
-	}, [radius]);
-
-	useEffect(() => {
-		if (heatmap) {
-			heatmap.renderer.canvas.style.opacity = opacity.toString();
-			heatmap.setData({
-				max: heatmapData[currentLayer].maxKeyPresses,
-				data: heatmapData[currentLayer].dataPoints,
-			});
-		}
-	}, [opacity]);
-
-	useEffect(() => {
-		if (heatmap) {
-			// console.log(heatmap.renderer.minOpacity);
-			heatmap.renderer.minOpacity = minOpacity;
-			heatmap.setData({
-				max: heatmapData[currentLayer].maxKeyPresses,
-				data: heatmapData[currentLayer].dataPoints,
-			});
-		}
-	}, [minOpacity]);
-
-	useEffect(() => {
-		if (heatmap) {
-			// console.log(heatmap.renderer.maxOpacity);
-			heatmap.renderer.maxOpacity = maxOpacity;
-			heatmap.setData({
-				max: heatmapData[currentLayer].maxKeyPresses,
-				data: heatmapData[currentLayer].dataPoints,
-			});
-		}
-	}, [maxOpacity]);
-
-	useEffect(() => {
-		if (heatmap) {
-			console.log(currentLayer);
-			if (!heatmapData[currentLayer]) return;
-			// heatmap.renderer.maxOpacity = maxOpacity;
-			heatmap.setData({
-				max: heatmapData[currentLayer].maxKeyPresses,
-				data: heatmapData[currentLayer].dataPoints,
-			});
-		}
-	}, [currentLayer]);
-
-	// const handleRadius = (event: Event, newValue: number | number[]) => {
-	// 	setRadius(newValue as number);
-	// };
-
-	// const handleOpacity = (event: Event, newValue: number | number[]) => {
-	// 	setOpacity(newValue as number);
-	// };
-
-	useEffect(() => {
-		if (heatmapData[0] && canvasContext) {
-			if (!heatmap) {
-				console.log("heatmapConfig", heatmapConfig);
-				heatmap = new HeatMap(heatmapConfig);
-				// console.log(heatmap);
-			} else {
-				heatmap.repaint();
-			}
-			const dataPoints = heatmapData[currentLayer];
-			heatmap.setData({
-				max: dataPoints.maxKeyPresses,
-				data: dataPoints.dataPoints,
-			});
-			heatmap.repaint();
-			console.log(heatmap);
-			// setHeatmapPresent(true);
-		}
-	}, [heatmapData]);
-
-	useEffect(() => {
-		if (heatmap && heatmapConfig) {
-			console.log(keyboardOverlayRef);
-			heatmap.renderer.radius = heatmapConfig.radius!;
-			heatmap.repaint();
-			console.log("repaint");
-		}
-	}, [heatmapConfig]);
-
-	// const handleChangeHeatmap = (config: IHeatmapConfig) => {
-	// 	setHeatmapConfig({ ...heatmapConfig, radius: config.radius });
-	// };
+	}, [heatmapSettings, heatmapData]);
 
 	useEffect(() => {
 		if (isConfig.matrixImageMapping && isConfig.keyboardImage) {
 			dispatch(setKeyboardImage(isConfig.keyboardImage));
 			dispatch(setMatrixImageMapping(isConfig.matrixImageMapping));
 			dispatch(setSetupState("logfileUpload"));
+
+			//setDefaultParameters
+			const configHeatmapSettings = isConfig.heatmapSettings;
+			if (configHeatmapSettings) {
+				setHeatmapSettings(configHeatmapSettings);
+			} else {
+				setHeatmapSettings({
+					radius: DEFAULT_RADIUS,
+					opacity: DEFAULT_OPACITY,
+					maxOpacity: DEFAULT_MAX_OPACITY,
+					currentLayer: 0,
+					gradient: {
+						0.1: "violet",
+						0.9: "red",
+					},
+				});
+			}
 		}
 	}, []);
 
@@ -281,12 +227,7 @@ export function Home() {
 		width: number,
 		height: number
 	) => {
-		setHeatmapConfig({
-			...heatmapConfig,
-			container,
-			width,
-			height,
-		});
+		setHeatmapInit({ container: container, width, height });
 	};
 
 	const handleCsvFile = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,6 +277,7 @@ export function Home() {
 
 	const checkArrowPress = useCallback(
 		(event: KeyboardEvent) => {
+			if (setupState !== "imageUpload") return;
 			const keycode = event.code;
 
 			if (!isArrowKey(keycode)) return;
@@ -364,7 +306,7 @@ export function Home() {
 				}
 			);
 		},
-		[canvasContext, currentKey.x, currentKey.y, matrixImageMapping]
+		[canvasContext, currentKey.x, currentKey.y, matrixImageMapping, setupState]
 	);
 
 	useEffect(() => {
@@ -373,7 +315,7 @@ export function Home() {
 		return () => {
 			window.removeEventListener("keydown", checkArrowPress);
 		};
-	}, [canvasContext, currentKey, matrixImageMapping]);
+	}, [canvasContext, currentKey, matrixImageMapping, setupState]);
 
 	return (
 		<div className={styles.home}>
@@ -390,137 +332,53 @@ export function Home() {
 						<>
 							<div className={styles.controls}>
 								<div className={styles.item}>
-									<p>radius</p>
-									<Slider
+									<div className={styles["text__items"]}>
+										<p>radius</p>
+										<p>{heatmapSettings.radius}</p>
+									</div>
+									<SimpleSlider
 										min={10}
 										max={100}
-										value={radius}
-										onChange={handleRaidus}
-										// railStyle={{
-										// 	height: 2,
-										// }}
-										handleStyle={{
-											height: 18,
-											width: 18,
-											backgroundColor: "#5071b4",
-											opacity: 1,
-											border: 0,
-										}}
-										trackStyle={{
-											background: "#4a5976",
-										}}
-										railStyle={{
-											background: "#272727",
-										}}
-									/>
-									{/* <CustomSlider
-										value={radius}
-										min={10}
-										max={100}
-										step={1}
+										value={heatmapSettings.radius}
 										onChange={handleRadius}
-									/> */}
+									/>
 								</div>
 								<div className={styles.item}>
-									<p>opacity</p>
-									<Slider
+									<div className={styles["text__items"]}>
+										<p>opacity</p>
+										<p>{heatmapSettings.opacity}</p>
+									</div>
+									<SimpleSlider
 										min={0}
-										step={0.05}
 										max={1}
-										value={opacity}
+										step={0.01}
+										value={heatmapSettings.opacity}
 										onChange={handleOpacity}
-										// railStyle={{
-										// 	height: 2,
-										// }}
-										handleStyle={{
-											height: 18,
-											width: 18,
-											backgroundColor: "#5071b4",
-											opacity: 1,
-											border: 0,
-										}}
-										trackStyle={{
-											background: "#4a5976",
-										}}
-										railStyle={{
-											background: "#272727",
-										}}
 									/>
 								</div>
 								<div className={styles.item}>
-									<p>max opacity</p>
-									<Slider
+									<div className={styles["text__items"]}>
+										<p>fingers opacity</p>
+										<p>{heatmapSettings.maxOpacity}</p>
+									</div>
+									<SimpleSlider
 										min={0}
-										max={255}
-										value={maxOpacity}
+										max={1}
+										step={0.01}
+										value={heatmapSettings.maxOpacity}
 										onChange={handleMaxOpacity}
-										// railStyle={{
-										// 	height: 2,
-										// }}
-										handleStyle={{
-											height: 18,
-											width: 18,
-											backgroundColor: "#5071b4",
-											opacity: 1,
-											border: 0,
-										}}
-										trackStyle={{
-											background: "#4a5976",
-										}}
-										railStyle={{
-											background: "#272727",
-										}}
 									/>
 								</div>
 								<div className={styles.item}>
-									<p>min opacity</p>
-									<Slider
+									<div className={styles["text__items"]}>
+										<p>layer</p>
+										<p>{heatmapSettings.currentLayer}</p>
+									</div>
+									<SimpleSlider
 										min={0}
-										max={255}
-										value={minOpacity}
-										onChange={handleMinOpacity}
-										// railStyle={{
-										// 	height: 2,
-										// }}
-										handleStyle={{
-											height: 18,
-											width: 18,
-											backgroundColor: "#5071b4",
-											opacity: 1,
-											border: 0,
-										}}
-										trackStyle={{
-											background: "#4a5976",
-										}}
-										railStyle={{
-											background: "#272727",
-										}}
-									/>
-								</div>
-								<div className={styles.item}>
-									<p>layer</p>
-									<Slider
-										min={0}
-										step={1}
-										max={5}
-										value={currentLayer}
+										max={heatmapData.length - 1}
+										value={heatmapSettings.currentLayer}
 										onChange={handleLayer}
-										// railStyle={{
-										// 	height: 2,
-										// }}
-										handleStyle={{
-											height: 18,
-											width: 18,
-											backgroundColor: "#5071b4",
-											opacity: 1,
-											border: 0,
-										}}
-										trackStyle={{
-											background: "#4a5976",
-										}}
-										railStyle={{
-											background: "#272727",
-										}}
 									/>
 								</div>
 							</div>
