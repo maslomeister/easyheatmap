@@ -68,7 +68,12 @@ Here are few examples from me:
 
 ## Roadmap
 
-- [ ] Add import/export functionality
+- [ ] Add settings page
+  - [ ] import/export data
+  - [ ] reset saved config
+  - [ ] change image or key matrix
+  - [ ] preview mapping data on image
+  - [ ] create custom layer names
 - [ ] Add drop down for layers selection
 - [ ] Add settings page where one could view and change saved settings
 - [ ] See the [open issues](https://github.com/maslomeister/easyheatmap/issues) for a full list of proposed features (and known issues).
