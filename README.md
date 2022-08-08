@@ -82,8 +82,6 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
 
 <!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
-### Built With
-
 [![React][react.js]][react-url][![Vite][vite]][vite-url][![Redux][redux]][redux-url]
 
 <!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
