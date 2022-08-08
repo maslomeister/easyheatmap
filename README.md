@@ -38,11 +38,11 @@
   <p align="center">
     Easily create beautiful heatmaps for your qmk keyboard
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">Website</a>
+    <a href="/">Website</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/maslomeister/easyheatmap/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/maslomeister/easyheatmap/issues">Request Feature</a>
   </p>
 </div>
 
