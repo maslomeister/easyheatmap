@@ -42,7 +42,6 @@ Here are few examples from me:
 ![Example one][example1]
 ![Example two][example2]
 ![Example three][example3]
-![Example four][example4]
 
 <!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
@@ -116,7 +115,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [example1]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example1.png?raw=true
 [example2]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example2.png?raw=true
 [example3]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example3.png?raw=true
-[example4]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example4.png?raw=true
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
