@@ -86,6 +86,16 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
 
 <!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
+<!-- USAGE EXAMPLES -->
+
+## Examples
+
+Using this tool you can highly customize look of your heatmap very easily.
+
+Here are few examples from me:
+
+<!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
+
 <!-- GETTING STARTED -->
 
 ## Local usage
@@ -102,16 +112,6 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
    ```js
    npm run dev
    ```
-
-<!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
-
-<!-- USAGE EXAMPLES -->
-
-## Examples of heatmaps
-
-Using this tool you can highly customize look of your heatmap very easily.
-
-Here are few examples from me:
 
 <!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
