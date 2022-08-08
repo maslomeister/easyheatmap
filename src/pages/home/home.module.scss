@@ -13,40 +13,6 @@
 	padding-bottom: 32px;
 }
 
-.file {
-	height: 0.1px;
-	opacity: 0;
-	position: absolute;
-	width: 0.1px;
-}
-
-.file-input label {
-	align-items: center;
-	backface-visibility: hidden;
-	background-color: var(--accent-color-blue);
-	border-radius: 25px;
-	box-shadow: 0 4px 4px rgb(0 0 0 / 24%), 0 12px 24px rgb(0 0 0 / 24%);
-	color: #fff;
-	cursor: pointer;
-	display: block;
-	display: flex;
-	filter: blur(0);
-	-webkit-font-smoothing: subpixel-antialiased;
-	font-weight: bold;
-	height: 50px;
-	justify-content: center;
-	min-width: 250px;
-	position: relative;
-
-	&:focus {
-		outline: unset;
-	}
-
-	&:active {
-		outline: unset;
-	}
-}
-
 .controls-container {
 	display: flex;
 	flex-direction: column;
@@ -54,7 +20,7 @@
 	justify-content: start;
 	left: 18px;
 	position: fixed;
-	top: 124px;
+	top: 200px;
 }
 
 .controls {

@@ -1,10 +1,45 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, matchPath, useLocation } from "react-router-dom";
+import Papa from "papaparse";
 
 import { Logo } from "../../assets/icons/logo";
+
+import { useAppDispatch, useAppSelector } from "@/services/hooks";
+import { setHeatmapData } from "@/services/reducers/setup-reducer";
+import { processCsv } from "@/utils/matrixUtils";
 
 import styles from "./navbar.module.scss";
 
 export function Navbar() {
+	const { pathname } = useLocation();
+	const home = matchPath(pathname, "/");
+
+	const dispatch = useAppDispatch();
+	const { setupState, matrixImageMapping } = useAppSelector(
+		(state) => state.setup
+	);
+	const handleCsvFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (!event.target.files) return;
+		const reader = new FileReader();
+		const file = event.target.files[0];
+
+		reader.onload = () => {
+			Papa.parse<[]>(file, {
+				worker: true,
+				dynamicTyping: true,
+				skipEmptyLines: "greedy",
+
+				complete: function (results) {
+					event.target.value = "";
+
+					dispatch(
+						setHeatmapData(processCsv(results.data, matrixImageMapping))
+					);
+				},
+			});
+		};
+		reader.readAsText(file);
+	};
+
 	return (
 		<div className={styles.navbar}>
 			<a className={`${styles.logo}  noselect`} href="/">
@@ -14,6 +49,18 @@ export function Navbar() {
 				</div>
 			</a>
 			<div className={styles.menu}>
+				{setupState === "logfileUpload" && home && (
+					<div className={`${styles["file-input"]} noselect`}>
+						<input
+							type="file"
+							id="file"
+							accept=".csv"
+							className={styles.file}
+							onChange={handleCsvFile}
+						/>
+						<label htmlFor="file">Upload keylog file</label>
+					</div>
+				)}
 				<NavLink
 					className={({ isActive }) =>
 						`${styles.item} ${isActive ? styles.active : ""} noselect`

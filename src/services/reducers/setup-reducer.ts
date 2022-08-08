@@ -19,6 +19,7 @@ export interface IAppState {
 	matrixImageMapping: IMatrixImageMapping[];
 	heatmapSettings: IHeatmapSettings;
 	heatmapData: IHeatMapData[];
+	showHotnessScale: boolean;
 }
 
 const initialState: IAppState = {
@@ -41,6 +42,7 @@ const initialState: IAppState = {
 		maxOpacity: DEFAULT_MAX_OPACITY,
 		gradient: DEFAULT_GRADIENT,
 	},
+	showHotnessScale: false,
 	heatmapData: [],
 };
 

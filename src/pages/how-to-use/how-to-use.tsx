@@ -78,13 +78,13 @@ export function HowToUse() {
 					Use this command <code>qmk info -kb {`<name>`} -m</code> to obtain
 					text representation of the matrix
 				</p>
+				<br />
 				<p>
 					Example output of <code>qmk info -kb crkbd -m</code>
-					<br />
-					<p className={styles["textarea"]}>
-						<pre>
-							<code className={styles["code-multi-line"]}>
-								{`Keyboard Name: Corne \nManufacturer: foostan
+				</p>
+				<pre>
+					<code className={styles["code-multi-line"]}>
+						{`Keyboard Name: Corne \nManufacturer: foostan
 Website:
 Maintainer: QMK Community
 Keyboard Folder: crkbd/rev1
@@ -124,35 +124,32 @@ Matrix for "LAYOUT_split_3x5_3":
             ┌──┐┌──┐│  │    │  │┌──┐┌──┐
             │3D││3E││  │    │  ││7E││7D│
             └──┘└──┘└──┘    └──┘└──┘└──┘`}
-							</code>
-						</pre>
-					</p>
-					<p>Only copy-paste the lines after “Matrix for …”</p>
-				</p>
+					</code>
+				</pre>
+				<p>Only copy-paste the lines after “Matrix for …”</p>
 			</section>
 			<section>
 				<h1>Sending key presses from your qmk keyboard to computer</h1>
 				<p>
 					Go to your qmk keymap folder, open <code> rules.mk</code> and add{" "}
-					<br />
-					<code className={styles["code-multi-line"]}>
+				</p>
+				<code className={styles["code-multi-line"]}>
+					{" "}
+					CONSOLE_ENABLED = yes;
+				</code>
+				<p className="subtext">
+					Console is rather heavy feature, so be prepared to disable other rules
+					if you don&apos;t have enough onboard flash, here are some{" "}
+					<a
+						className="span-link"
+						href="https://thomasbaart.nl/2018/12/01/reducing-firmware-size-in-qmk/"
+						target="_blank"
+						rel="noreferrer"
+					>
 						{" "}
-						CONSOLE_ENABLED = yes;
-					</code>
-					<p className="subtext">
-						Console is rather heavy feature, so be prepared to disable other
-						rules if you don&apos;t have enough onboard flash, here are some{" "}
-						<a
-							className="span-link"
-							href="https://thomasbaart.nl/2018/12/01/reducing-firmware-size-in-qmk/"
-							target="_blank"
-							rel="noreferrer"
-						>
-							{" "}
-							tips{" "}
-						</a>
-						to reduce firmware size
-					</p>
+						tips{" "}
+					</a>
+					to reduce firmware size
 				</p>
 
 				<p>
@@ -170,22 +167,23 @@ Matrix for "LAYOUT_split_3x5_3":
 					Now head to your <code>process_record_user</code> function and write
 					the <code>#ifdef</code> code block right after function signature, but
 					before the switch statement like so:
-					<pre>
-						<code
-							className={styles["code-multi-line"]}
-						>{`bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+				</p>
+				<pre>
+					<code
+						className={styles["code-multi-line"]}
+					>{`bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     #ifdef CONSOLE_ENABLE
         uprintf("0x%04X,%u,%u,%u,%b,0x%02X,0x%02X,%u\\n",
-             keycode,
-             record->event.key.row,
-             record->event.key.col,
-             get_highest_layer(layer_state),
-             record->event.pressed,
-             get_mods(),
-             get_oneshot_mods(),
-             record->tap.count
-             );
+              keycode,
+              record->event.key.row,
+              record->event.key.col,
+              get_highest_layer(layer_state),
+              record->event.pressed,
+              get_mods(),
+              get_oneshot_mods(),
+              record->tap.count
+        );
     #endif
 		
     switch (keycode) {
@@ -193,8 +191,7 @@ Matrix for "LAYOUT_split_3x5_3":
     }
     return true;
 }`}</code>
-					</pre>
-				</p>
+				</pre>
 				<p>
 					This will print the hexadecimal representation of every key you press
 					as well as its row, column and layer. Make sure to not leave any space

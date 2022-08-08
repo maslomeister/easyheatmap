@@ -24,7 +24,6 @@ import {
 	DEFAULT_GRADIENT,
 } from "@/constants/constants";
 
-import { processCsv } from "@/utils/matrixUtils";
 import { scaleNumber } from "@/utils/helpers";
 import { transformGradientToRecord } from "@/utils/colorArrayHelpers";
 
@@ -240,28 +239,28 @@ export function Home() {
 		setHeatmapInit({ container: container, width, height });
 	};
 
-	const handleCsvFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (!event.target.files) return;
-		const reader = new FileReader();
-		const file = event.target.files[0];
+	// const handleCsvFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+	// 	if (!event.target.files) return;
+	// 	const reader = new FileReader();
+	// 	const file = event.target.files[0];
 
-		reader.onload = () => {
-			Papa.parse<[]>(file, {
-				worker: true,
-				dynamicTyping: true,
-				skipEmptyLines: "greedy",
+	// 	reader.onload = () => {
+	// 		Papa.parse<[]>(file, {
+	// 			worker: true,
+	// 			dynamicTyping: true,
+	// 			skipEmptyLines: "greedy",
 
-				complete: function (results) {
-					event.target.value = "";
+	// 			complete: function (results) {
+	// 				event.target.value = "";
 
-					dispatch(
-						setHeatmapData(processCsv(results.data, matrixImageMapping))
-					);
-				},
-			});
-		};
-		reader.readAsText(file);
-	};
+	// 				dispatch(
+	// 					setHeatmapData(processCsv(results.data, matrixImageMapping))
+	// 				);
+	// 			},
+	// 		});
+	// 	};
+	// 	reader.readAsText(file);
+	// };
 
 	const renderTextArea = useMemo(() => {
 		if (setupState !== "logfileUpload") {
@@ -293,18 +292,6 @@ export function Home() {
 				<>
 					<div className={styles["view-heatmap"]}>
 						<div className={styles["controls-container"]}>
-							{!renderTextArea && (
-								<div className={`${styles["file-input"]} noselect`}>
-									<input
-										type="file"
-										id="file"
-										accept=".csv"
-										className={styles.file}
-										onChange={handleCsvFile}
-									/>
-									<label htmlFor="file">Upload keylog file</label>
-								</div>
-							)}
 							{renderControls && (
 								<div className={styles.controls}>
 									<div className={styles.item}>
