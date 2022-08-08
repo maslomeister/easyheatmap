@@ -13,7 +13,7 @@ export function Logo({ width, height, color = "#fff" }: Props) {
 			xmlns="http://www.w3.org/2000/svg"
 			enableBackground="new 0 0 48 48"
 		>
-			<polygon fill={color} points="9,39 9,6 7,6 7,41 42,41 42,39" />
+			<polygon fill="#46acff" points="9,39 9,6 7,6 7,41 42,41 42,39" />
 			<g fill={color}>
 				<circle cx="14" cy="11" r="2" />
 				<circle cx="32" cy="11" r="2" />
