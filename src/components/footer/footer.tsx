@@ -23,10 +23,20 @@ export function Footer() {
 					>
 						Github
 					</a>
-					<a className={`${styles.item} noselect`} href="/" target="_blank">
+					<a
+						className={`${styles.item} noselect`}
+						href="https://github.com/maslomeister/easyheatmap/issues"
+						target="_blank"
+						rel="noreferrer"
+					>
 						Report bug
 					</a>
-					<a className={`${styles.item} noselect`} href="/" target="_blank">
+					<a
+						className={`${styles.item} noselect`}
+						href="https://github.com/maslomeister/easyheatmap/issues"
+						target="_blank"
+						rel="noreferrer"
+					>
 						Suggest Feature
 					</a>
 				</div>
