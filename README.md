@@ -2,34 +2,9 @@
 
 <a name="readme-top"></a>
 
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-
-<!-- [![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url] -->
-
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/maslomeister/easyheatmap">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -54,11 +29,7 @@
 
 This tool will allow you to create heatmap for you qmk keyboard in a few easy steps, you can also customize the look of your heatmap very easily.
 
-<!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
-
 [![React][react.js]][react-url][![Vite][vite]][vite-url][![Redux][redux]][redux-url]
-
-<!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 <!-- USAGE EXAMPLES -->
 
@@ -67,6 +38,11 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
 Using this tool you can highly customize look of your heatmap very easily.
 
 Here are few examples from me:
+
+![Example one][example1]
+![Example two][example2]
+![Example three][example3]
+![Example four][example4]
 
 <!-- <p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
@@ -136,17 +112,11 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-<!-- [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues -->
-
+[example1]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example1.png?raw=true
+[example2]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example2.png?raw=true
+[example3]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example3.png?raw=true
+[example4]: https://github.com/maslomeister/easyheatmap/blob/master/images/examples/example4.png?raw=true
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
