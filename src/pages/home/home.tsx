@@ -4,6 +4,8 @@ import HeatMap from "heatmap-ts";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useLocalStorage } from "usehooks-ts";
+import * as htmlToImage from "html-to-image";
+import { saveAs } from "file-saver";
 
 import { useAppDispatch, useAppSelector } from "@/services/hooks";
 import {
@@ -14,9 +16,6 @@ import {
 	setHeatmapData,
 } from "@/services/reducers/setup-reducer";
 
-import { processCsv } from "@/utils/matrixUtils";
-import { scaleNumber } from "@/utils/helpers";
-
 import {
 	DEFAULT_RADIUS,
 	DEFAULT_OPACITY,
@@ -25,12 +24,15 @@ import {
 	DEFAULT_GRADIENT,
 } from "@/constants/constants";
 
+import { processCsv } from "@/utils/matrixUtils";
+import { scaleNumber } from "@/utils/helpers";
+import { transformGradientToRecord } from "@/utils/colorArrayHelpers";
+
 import { ColorsArray } from "./components/colors-array/colors-array";
 import { ImageLayout } from "./components/image-layout/image-layout";
 import { TextMatrix } from "./components/text-matrix/text-matrix";
 
 import styles from "./home.module.scss";
-import { transformGradientToRecord } from "@/utils/colorArrayHelpers";
 
 function SimpleSlider({
 	min,
@@ -163,46 +165,18 @@ export function Home() {
 		const element = document.getElementById("keyboardLayer");
 		if (!element) return;
 
-		const keyboardOverlay = element.children[0];
-		const keyboardImage = element.children[1] as HTMLCanvasElement;
-		const heatmap = element.children[2] as HTMLCanvasElement;
-
-		const screenshotCanvas = document.createElement("canvas");
-
-		if (keyboardOverlay && keyboardImage && heatmap && screenshotCanvas) {
-			screenshotCanvas.width = Number(keyboardOverlay.getAttribute("width"));
-			screenshotCanvas.height = Number(keyboardOverlay.getAttribute("height"));
-
-			const screenshotCtx = screenshotCanvas.getContext("2d");
-
-			if (screenshotCtx) {
-				const image = new Image();
-				const keyboardImageB64 = keyboardImage.getAttribute("style");
-				if (keyboardImageB64) {
-					const match = keyboardImageB64.match(`(?<=\\()[^\\)]+`);
-					if (match && match[0]) {
-						// console.log(match[0]);
-						image.src = match[0].split(`"`)[1];
-					}
+		htmlToImage
+			.toPng(element)
+			.then(function (dataUrl) {
+				if (window.saveAs) {
+					window.saveAs(dataUrl, "heatmap_image.png");
+				} else {
+					saveAs(dataUrl, "heatmap_image.png");
 				}
-				// image.src = keyboardImageB64 as string;
-				// console.log(img_uri);
-
-				image.onload = function () {
-					screenshotCtx.drawImage(image, 100, 100);
-					screenshotCtx.drawImage(heatmap, 0, 0);
-
-					const downloadLink = document.createElement("a");
-					// Add the name of the file to the link
-					downloadLink.download = "keyboard_image.png";
-					// Attach the data to the link
-					downloadLink.href = screenshotCanvas.toDataURL();
-					// Get the code to click the download link
-					downloadLink.click();
-					// document.body.appendChild(screenshotCanvas);
-				};
-			}
-		}
+			})
+			.catch(function (error) {
+				console.error("oops, something went wrong!", error);
+			});
 	};
 
 	useEffect(() => {
@@ -318,8 +292,20 @@ export function Home() {
 			{renderImageLayout && (
 				<>
 					<div className={styles["view-heatmap"]}>
-						{renderControls && (
-							<div className={styles["controls-container"]}>
+						<div className={styles["controls-container"]}>
+							{!renderTextArea && (
+								<div className={`${styles["file-input"]} noselect`}>
+									<input
+										type="file"
+										id="file"
+										accept=".csv"
+										className={styles.file}
+										onChange={handleCsvFile}
+									/>
+									<label htmlFor="file">Upload keylog file</label>
+								</div>
+							)}
+							{renderControls && (
 								<div className={styles.controls}>
 									<div className={styles.item}>
 										<div className={styles["text__items"]}>
@@ -383,6 +369,7 @@ export function Home() {
 											onChange={handleLayer}
 										/>
 									</div>
+
 									<ColorsArray
 										gradient={heatmapSettings.gradient}
 										updateGradient={updateGradient}
@@ -391,8 +378,8 @@ export function Home() {
 										showColorPicker={showColorPicker}
 									/>
 								</div>
-							</div>
-						)}
+							)}
+						</div>
 						<ImageLayout
 							canvasContext={canvasContext}
 							setCanvasContext={setCanvasContext}
@@ -401,18 +388,6 @@ export function Home() {
 							updateHeatmapConfig={updateHeatmapConfig}
 						/>
 					</div>
-					{!renderTextArea && (
-						<div className={`${styles["file-input"]} noselect`}>
-							<input
-								type="file"
-								id="file"
-								accept=".csv"
-								className={styles.file}
-								onChange={handleCsvFile}
-							/>
-							<label htmlFor="file">Upload keylog file</label>
-						</div>
-					)}
 				</>
 			)}
 			{renderTextArea && <TextMatrix />}

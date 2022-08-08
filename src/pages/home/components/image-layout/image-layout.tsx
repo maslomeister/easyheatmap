@@ -1,6 +1,9 @@
 import React, { useRef, useEffect, useCallback } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/services/hooks";
+
+import { HotnessScale } from "@/components/hotness-scale/hotness-scale";
+
 import {
 	setKeyboardImage,
 	setMatrixArray,
@@ -252,7 +255,12 @@ export function ImageLayout({
 	}, [canvasContext, currentKey, matrixImageMapping, setupState]);
 
 	return (
-		<div className={styles["layout-image-container"]}>
+		<div
+			className={styles["layout-image-container"]}
+			style={{
+				pointerEvents: setupState === "logfileUpload" ? "none" : undefined,
+			}}
+		>
 			{!keyboardImage.src && (
 				<div className={styles["file-input"]}>
 					<input
@@ -269,15 +277,14 @@ export function ImageLayout({
 				<div
 					className={styles["keyboard__layer"]}
 					style={{
-						width: keyboardImage.width,
-						height: keyboardImage.height,
-						pointerEvents: setupState === "logfileUpload" ? "none" : undefined,
+						width: keyboardImage.width + 160,
+						height: keyboardImage.height + 200,
 					}}
 				>
 					<div
 						className={styles["canvas--centered"]}
 						style={{
-							width: keyboardImage.width + 200,
+							width: keyboardImage.width + 160,
 							height: keyboardImage.height + 200,
 							pointerEvents:
 								setupState === "logfileUpload" ? "none" : undefined,
@@ -288,25 +295,33 @@ export function ImageLayout({
 					>
 						<canvas
 							className={styles["canvas--centered"]}
-							width={keyboardImage.width + 200}
+							width={keyboardImage.width + 160}
 							height={keyboardImage.height + 200}
 							style={{
 								zIndex: "1",
-								pointerEvents:
-									setupState === "logfileUpload" ? "none" : undefined,
 							}}
 							ref={keyboardImageRef}
 						/>
+
 						<canvas
 							className={styles["canvas--centered"]}
 							width={keyboardImage.width}
 							height={keyboardImage.height}
 							style={{
 								backgroundImage: `url(${keyboardImage.src})`,
-								zIndex: "0",
 								pointerEvents: "none",
+								zIndex: "0",
 							}}
 						/>
+						<div
+							style={{
+								right: "124px",
+								top: "24px",
+								position: "absolute",
+							}}
+						>
+							<HotnessScale />
+						</div>
 					</div>
 				</div>
 			)}
