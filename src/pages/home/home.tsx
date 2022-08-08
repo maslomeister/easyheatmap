@@ -1,13 +1,6 @@
-import React, {
-	useEffect,
-	useState,
-	useRef,
-	useCallback,
-	useMemo,
-} from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import Papa from "papaparse";
 import HeatMap from "heatmap-ts";
-import { DndContext } from "@dnd-kit/core";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useLocalStorage } from "usehooks-ts";
@@ -18,6 +11,7 @@ import {
 	setMatrixImageMapping,
 	setSetupState,
 	updateHeatmapSettings,
+	setHeatmapData,
 } from "@/services/reducers/setup-reducer";
 
 import { processCsv } from "@/utils/matrixUtils";
@@ -85,12 +79,9 @@ export function Home() {
 	const keyboardOverlayRef = useRef<HTMLDivElement>(null);
 
 	const [heatmap, setHeatmap] = useState<HeatMap>();
-
-	// const [heatmapSettings, updateHeatmapSettings] = useState<IHeatmapSettings>({
-	// 	radius: DEFAULT_RADIUS,
-	// 	opacity: DEFAULT_OPACITY,
-	// 	maxOpacity: DEFAULT_MAX_OPACITY,
-	// } as IHeatmapSettings);
+	const [showColorPicker, setShowColorPicker] = useState<IGradient>(
+		{} as IGradient
+	);
 
 	const [heatmapInit, setHeatmapInit] = useState<{
 		container: HTMLDivElement;
@@ -104,9 +95,8 @@ export function Home() {
 	);
 
 	const dispatch = useAppDispatch();
-	const { heatmapSettings, setupState, matrixImageMapping } = useAppSelector(
-		(state) => state.setup
-	);
+	const { heatmapData, heatmapSettings, setupState, matrixImageMapping } =
+		useAppSelector((state) => state.setup);
 
 	const handleLayer = (value: number) => {
 		dispatch(
@@ -145,7 +135,6 @@ export function Home() {
 	};
 
 	const updateGradient = (gradient: IGradient[]) => {
-		// console.log(gradient);
 		dispatch(
 			updateHeatmapSettings({
 				...heatmapSettings,
@@ -156,8 +145,6 @@ export function Home() {
 
 	const [canvasContext, setCanvasContext] =
 		useState<CanvasRenderingContext2D>();
-
-	const [heatmapData, setHeatmapData] = useState<IHeatMapData[]>([]);
 
 	// init heatmapjs
 	useEffect(() => {
@@ -171,6 +158,52 @@ export function Home() {
 			);
 		}
 	}, [heatmapInit]);
+
+	const saveScreenshot = () => {
+		const element = document.getElementById("keyboardLayer");
+		if (!element) return;
+
+		const keyboardOverlay = element.children[0];
+		const keyboardImage = element.children[1] as HTMLCanvasElement;
+		const heatmap = element.children[2] as HTMLCanvasElement;
+
+		const screenshotCanvas = document.createElement("canvas");
+
+		if (keyboardOverlay && keyboardImage && heatmap && screenshotCanvas) {
+			screenshotCanvas.width = Number(keyboardOverlay.getAttribute("width"));
+			screenshotCanvas.height = Number(keyboardOverlay.getAttribute("height"));
+
+			const screenshotCtx = screenshotCanvas.getContext("2d");
+
+			if (screenshotCtx) {
+				const image = new Image();
+				const keyboardImageB64 = keyboardImage.getAttribute("style");
+				if (keyboardImageB64) {
+					const match = keyboardImageB64.match(`(?<=\\()[^\\)]+`);
+					if (match && match[0]) {
+						// console.log(match[0]);
+						image.src = match[0].split(`"`)[1];
+					}
+				}
+				// image.src = keyboardImageB64 as string;
+				// console.log(img_uri);
+
+				image.onload = function () {
+					screenshotCtx.drawImage(image, 100, 100);
+					screenshotCtx.drawImage(heatmap, 0, 0);
+
+					const downloadLink = document.createElement("a");
+					// Add the name of the file to the link
+					downloadLink.download = "keyboard_image.png";
+					// Attach the data to the link
+					downloadLink.href = screenshotCanvas.toDataURL();
+					// Get the code to click the download link
+					downloadLink.click();
+					// document.body.appendChild(screenshotCanvas);
+				};
+			}
+		}
+	};
 
 	useEffect(() => {
 		if (
@@ -247,7 +280,9 @@ export function Home() {
 				complete: function (results) {
 					event.target.value = "";
 
-					setHeatmapData(processCsv(results.data, matrixImageMapping));
+					dispatch(
+						setHeatmapData(processCsv(results.data, matrixImageMapping))
+					);
 				},
 			});
 		};
@@ -351,6 +386,9 @@ export function Home() {
 									<ColorsArray
 										gradient={heatmapSettings.gradient}
 										updateGradient={updateGradient}
+										saveScreenshot={saveScreenshot}
+										setShowColorPicker={setShowColorPicker}
+										showColorPicker={showColorPicker}
 									/>
 								</div>
 							</div>

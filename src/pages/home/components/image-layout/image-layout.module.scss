@@ -1,7 +1,7 @@
 .layout-image-container {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
-	// margin-top: 64px;
 	padding-bottom: 48px;
 	padding-top: 24px;
 }
@@ -16,7 +16,6 @@
 .file-input label {
 	align-items: center;
 	backface-visibility: hidden;
-	// background: linear-gradient(40deg, #ff6ec4, #7873f5);
 	background-color: var(--accent-color-blue);
 	border-radius: 25px;
 	box-shadow: 0 4px 4px rgb(0 0 0 / 24%), 0 12px 24px rgb(0 0 0 / 24%);
@@ -31,7 +30,6 @@
 	justify-content: center;
 	min-width: 520px;
 	position: relative;
-	// transition: transform 0.15s ease-out;
 
 	&:focus {
 		outline: unset;

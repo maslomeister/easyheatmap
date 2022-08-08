@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import Papa from "papaparse";
+import React, { useRef, useEffect, useCallback } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/services/hooks";
 import {
@@ -18,7 +17,6 @@ import {
 } from "@/services/reducers/setup-reducer";
 import { MAX_IMAGE_HEIGHT, MAX_IMAGE_WIDTH } from "@/constants/constants";
 
-import { getMatrixKeys, processCsv } from "@/utils/matrixUtils";
 import {
 	drawPoint,
 	erasePoint,
@@ -52,9 +50,6 @@ export function ImageLayout({
 	keyboardOverlayRef,
 	updateHeatmapConfig,
 }: Props) {
-	// const keyboardOverlayRef = useRef<HTMLDivElement>(null);
-	const keyboardImageRef = useRef<HTMLCanvasElement>(null);
-
 	const dispatch = useAppDispatch();
 	const {
 		keyboardImage,
@@ -64,6 +59,7 @@ export function ImageLayout({
 		currentKey,
 		setupState,
 	} = useAppSelector((state) => state.setup);
+	const keyboardImageRef = useRef<HTMLCanvasElement>(null);
 
 	const regularKey = (key: string) => `<span class="regular-key">${key}</span>`;
 
@@ -98,8 +94,8 @@ export function ImageLayout({
 			} else {
 				dispatch(
 					setKeyboardImage({
-						width: this.width - 12,
-						height: this.height - 12,
+						width: this.width,
+						height: this.height,
 						src: e.target?.result as string,
 					})
 				);
@@ -164,7 +160,7 @@ export function ImageLayout({
 	const removePressedOnScreenKeyToMapping = () => {
 		const key = currentKey;
 		let textArea = textRepresentation;
-		// console.log(textArea);
+
 		if (matrixImageMapping.length > 0 && key && canvasContext) {
 			const currentKeyPopped =
 				matrixImageMapping[matrixImageMapping.length - 1];
@@ -202,10 +198,10 @@ export function ImageLayout({
 
 	const handleMouseClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (setupState !== "imageUpload") return;
-		// console.log(event);
+
 		const clickX = event.nativeEvent.offsetX;
 		const clickY = event.nativeEvent.offsetY;
-		// console.log(clickX, clickY);
+
 		if (!event.shiftKey) {
 			addPressedOnScreenKeyToMapping(clickX, clickY);
 		} else {
@@ -280,15 +276,15 @@ export function ImageLayout({
 				>
 					<div
 						className={styles["canvas--centered"]}
-						// className={styles["canvases-container"]}
 						style={{
 							width: keyboardImage.width + 200,
 							height: keyboardImage.height + 200,
-							// pointerEvents: "none",
+							pointerEvents:
+								setupState === "logfileUpload" ? "none" : undefined,
 						}}
 						onClick={handleMouseClick}
 						ref={keyboardOverlayRef}
-						// key={heatmapLoaded}
+						id="keyboardLayer"
 					>
 						<canvas
 							className={styles["canvas--centered"]}
@@ -296,6 +292,8 @@ export function ImageLayout({
 							height={keyboardImage.height + 200}
 							style={{
 								zIndex: "1",
+								pointerEvents:
+									setupState === "logfileUpload" ? "none" : undefined,
 							}}
 							ref={keyboardImageRef}
 						/>
@@ -305,7 +303,6 @@ export function ImageLayout({
 							height={keyboardImage.height}
 							style={{
 								backgroundImage: `url(${keyboardImage.src})`,
-								backgroundPosition: "-6px -6px",
 								zIndex: "0",
 								pointerEvents: "none",
 							}}

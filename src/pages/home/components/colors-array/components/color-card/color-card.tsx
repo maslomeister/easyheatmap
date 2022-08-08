@@ -1,9 +1,5 @@
-import React, { useMemo, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
-import { HandleIcon } from "@/assets/icons/handle_icon";
-import { ChangeColorIcon } from "@/assets/icons/change_color_icon";
 
 import styles from "./color-card.module.scss";
 
@@ -12,20 +8,15 @@ interface IColorCard {
 	item: IGradient;
 	handle: boolean;
 	removeItem: (id: string) => void;
-	// changeColor: (id: string, color: string) => void;
-	// showColorPicker: boolean;
 	setShowColorPicker?: (item: IGradient) => void;
 }
 
 export function ColorCard({
 	id,
 	item,
-	removeItem /* changeColor */,
+	removeItem,
 	setShowColorPicker,
 }: IColorCard) {
-	// const [showColorPicker, setShowColorPicker] = useState(false);
-	// const [colorValue, setColorValue] = useState(color);
-
 	const handleItemRemove = () => {
 		if (setShowColorPicker) {
 			setShowColorPicker({} as IGradient);
@@ -33,10 +24,6 @@ export function ColorCard({
 
 		removeItem(id);
 	};
-
-	// const onColorPicked = (color: ColorResult) => {
-	// 	changeColor(id, color.hex);
-	// };
 
 	const {
 		attributes,
@@ -64,7 +51,7 @@ export function ColorCard({
 				className={styles["handler"]}
 				{...listeners}
 				{...attributes}
-				// style={handlerStyle}
+				style={handlerStyle}
 			/>
 			<span
 				className={styles["color-dot"]}

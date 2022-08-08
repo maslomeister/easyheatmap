@@ -21,22 +21,26 @@ export function addNewColor(gradient: IGradient[], color: string): IGradient[] {
 	const length = gradient.length;
 	const newGradient: IGradient[] = [];
 
-	for (let i = 0; i <= length; i++) {
-		if (i === 0) {
-			newGradient.push({
-				id: gradient[0].id,
-				value: 0,
-				color: gradient[0].color,
-			});
-		} else if (i !== length) {
-			newGradient.push({
-				id: gradient[i].id,
-				value: round(i / length, 1),
-				color: gradient[i].color,
-			});
-		} else {
-			newGradient.push({ id: uuidv4(), value: 0.9, color: color });
+	if (length) {
+		for (let i = 0; i <= length; i++) {
+			if (i === 0) {
+				newGradient.push({
+					id: gradient[0].id,
+					value: 0,
+					color: gradient[0].color,
+				});
+			} else if (i !== length) {
+				newGradient.push({
+					id: gradient[i].id,
+					value: round(i / length, 1),
+					color: gradient[i].color,
+				});
+			} else {
+				newGradient.push({ id: uuidv4(), value: 0.9, color: color });
+			}
 		}
+	} else {
+		newGradient.push({ id: uuidv4(), value: 0.8, color: color });
 	}
 
 	return newGradient;

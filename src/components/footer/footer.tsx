@@ -1,5 +1,3 @@
-import { Logo } from "@/assets/icons/logo";
-
 import styles from "./footer.module.scss";
 
 export function Footer() {

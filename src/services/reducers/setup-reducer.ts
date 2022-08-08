@@ -6,6 +6,7 @@ import {
 	DEFAULT_OPACITY,
 	DEFAULT_MAX_OPACITY,
 	DEFAULT_CURRENT_LAYER,
+	DEFAULT_GRADIENT,
 } from "@/constants/constants";
 
 export interface IAppState {
@@ -18,6 +19,7 @@ export interface IAppState {
 	keyboardImage: IKeyboardImage;
 	matrixImageMapping: IMatrixImageMapping[];
 	heatmapSettings: IHeatmapSettings;
+	heatmapData: IHeatMapData[];
 }
 
 const initialState: IAppState = {
@@ -38,8 +40,9 @@ const initialState: IAppState = {
 		opacity: DEFAULT_OPACITY,
 		currentLayer: DEFAULT_CURRENT_LAYER,
 		maxOpacity: DEFAULT_MAX_OPACITY,
-		gradient: [],
+		gradient: DEFAULT_GRADIENT,
 	},
+	heatmapData: [],
 };
 
 export const setupReducer = createSlice({
@@ -117,6 +120,9 @@ export const setupReducer = createSlice({
 					return item;
 				}),
 			});
+		},
+		setHeatmapData: (state, heatmapData: PayloadAction<IHeatMapData[]>) => {
+			state.heatmapData = heatmapData.payload;
 		},
 		moveCurrentKeyDown: (state, currentKey: PayloadAction<ICurrentKey>) => {
 			return (state = {
@@ -213,6 +219,7 @@ export const {
 	moveCurrentKeyLeft,
 	moveCurrentKeyRight,
 	updateHeatmapSettings,
+	setHeatmapData,
 } = setupReducer.actions;
 
 // The function below is called a selector and allows us to select a value from
