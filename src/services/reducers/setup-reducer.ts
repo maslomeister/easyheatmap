@@ -1,6 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppThunk } from "../store";
 
+import {
+	DEFAULT_RADIUS,
+	DEFAULT_OPACITY,
+	DEFAULT_MAX_OPACITY,
+	DEFAULT_CURRENT_LAYER,
+} from "@/constants/constants";
+
 export interface IAppState {
 	matrixArray: string[];
 	nextKey: string;
@@ -10,6 +17,7 @@ export interface IAppState {
 	setupState: string;
 	keyboardImage: IKeyboardImage;
 	matrixImageMapping: IMatrixImageMapping[];
+	heatmapSettings: IHeatmapSettings;
 }
 
 const initialState: IAppState = {
@@ -25,6 +33,13 @@ const initialState: IAppState = {
 		height: 0,
 	},
 	matrixImageMapping: [],
+	heatmapSettings: {
+		radius: DEFAULT_RADIUS,
+		opacity: DEFAULT_OPACITY,
+		currentLayer: DEFAULT_CURRENT_LAYER,
+		maxOpacity: DEFAULT_MAX_OPACITY,
+		gradient: [],
+	},
 };
 
 export const setupReducer = createSlice({
@@ -77,6 +92,15 @@ export const setupReducer = createSlice({
 		},
 		setKeyboardImage: (state, keyboardImage: PayloadAction<IKeyboardImage>) => {
 			state.keyboardImage = keyboardImage.payload;
+		},
+		updateHeatmapSettings: (
+			state,
+			heatmapSettings: PayloadAction<IHeatmapSettings>
+		) => {
+			return (state = {
+				...state,
+				heatmapSettings: heatmapSettings.payload,
+			});
 		},
 		moveCurrentKeyUp: (state, currentKey: PayloadAction<ICurrentKey>) => {
 			return (state = {
@@ -188,6 +212,7 @@ export const {
 	moveCurrentKeyDown,
 	moveCurrentKeyLeft,
 	moveCurrentKeyRight,
+	updateHeatmapSettings,
 } = setupReducer.actions;
 
 // The function below is called a selector and allows us to select a value from
