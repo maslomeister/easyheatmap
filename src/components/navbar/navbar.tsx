@@ -30,14 +30,14 @@ export function Navbar() {
 				>
 					How to use
 				</NavLink>
-				<NavLink
+				{/* <NavLink
 					className={({ isActive }) =>
 						`${styles.item} ${isActive ? styles.active : ""} noselect`
 					}
 					to="/settings"
 				>
 					Settings
-				</NavLink>
+				</NavLink> */}
 			</div>
 		</div>
 	);
