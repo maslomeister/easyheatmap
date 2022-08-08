@@ -15,30 +15,24 @@ interface IKeyboardImage extends ISize {
 	src: string;
 }
 
-// interface ICanvas {
-// 	width: number;
-// 	height: number;
-// 	image: string;
-// }
-
 interface IMatrixImageMapping {
 	x: number;
 	y: number;
 	keycode: string;
 }
 
-// interface IMatrixToImage {
-// 	x: number;
-// 	y: number;
-// 	keyMatrix: string;
-// 	[index: number]: [number, number];
-// }
+interface IGradient {
+	id: string;
+	value: number;
+	color: string;
+}
+
 interface IHeatmapSettings {
 	radius: number;
 	opacity: number;
 	maxOpacity: number;
 	currentLayer: number;
-	gradient: Record<number, string>;
+	gradient: IGradient[];
 	layerNames?: string[];
 }
 interface IConfig {
@@ -57,28 +51,3 @@ interface IHeatMapData {
 	maxKeyPresses: number;
 	dataPoints: IDataPoints[];
 }
-
-// interface IHeatmapConfig {
-// 	radius?: number;
-// 	width?: number;
-// 	height?: number;
-// 	gradient?: Record<number, string>;
-// 	blur?: number;
-// 	backgroundColor?: string;
-// 	opacity?: number;
-// 	maxOpacity?: number;
-// 	minOpacity?: number;
-// 	useGradientOpacity?: boolean;
-// }
-
-// interface IHeatmapConfig {
-// 	radius: number;
-// 	gradient: Record<number, string>;
-// 	blur: number;
-// 	maxOpacity: number;
-// 	useGradientOpacity: boolean;
-// }
-
-// interface IHeatmapConfigContainer extends IHeatmapConfig {
-// 	container?: HTMLDivElement;
-// }
