@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 
 import { getMatrixKeys } from "@/utils/matrixUtils";
 
@@ -20,8 +20,14 @@ export function TextMatrix() {
 	const [error, setError] = useState("");
 
 	const dispatch = useAppDispatch();
-	const { nextKey, textRepresentation, textAreaSize, keyboardImage } =
-		useAppSelector((state) => state.setup);
+	const {
+		nextKey,
+		textRepresentation,
+		textAreaSize,
+		keyboardImage,
+		matrixArray,
+		matrixImageMapping,
+	} = useAppSelector((state) => state.setup);
 
 	const resizeOnInputChange = () => {
 		const textAreaElem = textAreaRef.current;
@@ -76,20 +82,39 @@ export function TextMatrix() {
 		dispatch(setNextKey(matrixKeys.matrix[0]));
 	};
 
+	const isTextMatrixFinished = useMemo(() => {
+		if (matrixArray.length == 0 && matrixImageMapping.length > 0) {
+			return true;
+		}
+		return false;
+	}, [matrixImageMapping, matrixArray]);
+
 	return (
 		<>
 			{keyboardImage.src && (
 				<div className={styles["current-key-helper"]}>
-					<p className="noselect">
-						Click the key on picture that corresponds to{" "}
-						<span className={styles["active-key"]}>{nextKey}</span>
-					</p>
-					<p className="subtext noselect">
-						Hold <span className={styles["highlighted-text"]}> shift </span> and
-						click on picture to remove last selected key, use
-						<span className={styles["highlighted-text"]}> ESDF </span> to to
-						correct position
-					</p>
+					{isTextMatrixFinished ? (
+						<>
+							<p className="noselect">
+								<span className={styles["highlighted-text"]}> Click </span>{" "}
+								anywhere on the image to
+								<span className={styles["highlighted-text"]}> continue </span>
+							</p>
+						</>
+					) : (
+						<>
+							<p className="noselect">
+								Click the key on picture that corresponds to{" "}
+								<span className={styles["active-key"]}>{nextKey}</span>
+							</p>
+							<p className="subtext noselect">
+								Hold <span className={styles["highlighted-text"]}> shift </span>{" "}
+								and click on picture to remove last selected key, use
+								<span className={styles["highlighted-text"]}> ESDF </span> to to
+								correct position
+							</p>
+						</>
+					)}
 				</div>
 			)}
 			<div className={styles["textarea-container"]}>

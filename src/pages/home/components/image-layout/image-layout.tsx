@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Papa from "papaparse";
 
 import { useAppDispatch, useAppSelector } from "@/services/hooks";
@@ -11,6 +11,10 @@ import {
 	setTextRepresentation,
 	shiftMatrixArray,
 	setSetupState,
+	moveCurrentKeyUp,
+	moveCurrentKeyDown,
+	moveCurrentKeyLeft,
+	moveCurrentKeyRight,
 } from "@/services/reducers/setup-reducer";
 import { MAX_IMAGE_HEIGHT, MAX_IMAGE_WIDTH } from "@/constants/constants";
 
@@ -110,11 +114,17 @@ export function ImageLayout({
 		fileReader.readAsDataURL(event.target.files[0]);
 	};
 
+	const isTextMatrixFinished = useCallback(() => {
+		if (matrixArray.length === 0 && matrixImageMapping.length > 0) {
+			return true;
+		}
+		return false;
+	}, [matrixImageMapping, matrixArray]);
+
 	const addPressedOnScreenKeyToMapping = (x: number, y: number) => {
 		const keycode = matrixArray[0];
 		dispatch(shiftMatrixArray());
 		let textArea = textRepresentation;
-		console.log(canvasContext);
 		if (!canvasContext) return;
 		if (keycode) {
 			dispatch(
@@ -135,11 +145,8 @@ export function ImageLayout({
 					)
 				);
 			}
-
-			if (
-				matrixImageMapping.length > 0 &&
-				!matrixArray[matrixArray.length - 2]
-			) {
+		} else {
+			if (isTextMatrixFinished()) {
 				setConfig({
 					keyboardImage,
 					matrixImageMapping,
@@ -206,6 +213,48 @@ export function ImageLayout({
 		}
 	};
 
+	const checkArrowPress = useCallback(
+		(event: KeyboardEvent) => {
+			if (setupState !== "imageUpload") return;
+			const keycode = event.code;
+
+			if (!isArrowKey(keycode)) return;
+
+			if (!currentKey) return;
+
+			if (!canvasContext) return;
+
+			movePoint(
+				keycode,
+				() => {
+					dispatch(moveCurrentKeyUp(currentKey));
+					movePointUp(canvasContext, currentKey.x, currentKey.y);
+				},
+				() => {
+					dispatch(moveCurrentKeyDown(currentKey));
+					movePointDown(canvasContext, currentKey.x, currentKey.y);
+				},
+				() => {
+					dispatch(moveCurrentKeyLeft(currentKey));
+					movePointLeft(canvasContext, currentKey.x, currentKey.y);
+				},
+				() => {
+					dispatch(moveCurrentKeyRight(currentKey));
+					movePointRight(canvasContext, currentKey.x, currentKey.y);
+				}
+			);
+		},
+		[canvasContext, currentKey.x, currentKey.y, matrixImageMapping, setupState]
+	);
+
+	useEffect(() => {
+		window.addEventListener("keydown", checkArrowPress);
+
+		return () => {
+			window.removeEventListener("keydown", checkArrowPress);
+		};
+	}, [canvasContext, currentKey, matrixImageMapping, setupState]);
+
 	return (
 		<div className={styles["layout-image-container"]}>
 			{!keyboardImage.src && (
@@ -226,6 +275,7 @@ export function ImageLayout({
 					style={{
 						width: keyboardImage.width,
 						height: keyboardImage.height,
+						pointerEvents: setupState === "logfileUpload" ? "none" : undefined,
 					}}
 				>
 					<div

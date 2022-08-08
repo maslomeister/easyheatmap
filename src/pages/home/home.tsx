@@ -7,49 +7,36 @@ import React, {
 } from "react";
 import Papa from "papaparse";
 import HeatMap from "heatmap-ts";
+import { DndContext } from "@dnd-kit/core";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useLocalStorage } from "usehooks-ts";
 
 import { useAppDispatch, useAppSelector } from "@/services/hooks";
 import {
-	setNextKey,
-	setMatrixArray,
-	setTextRepresentation,
-	setTextAreaSize,
 	setKeyboardImage,
 	setMatrixImageMapping,
 	setSetupState,
-	moveCurrentKeyUp,
-	moveCurrentKeyDown,
-	moveCurrentKeyLeft,
-	moveCurrentKeyRight,
+	updateHeatmapSettings,
 } from "@/services/reducers/setup-reducer";
 
-import { getMatrixKeys, processCsv } from "@/utils/matrixUtils";
-import {
-	drawPoint,
-	erasePoint,
-	movePointUp,
-	movePointDown,
-	movePointLeft,
-	movePointRight,
-	eraseAll,
-} from "@/utils/canvasUtils";
-import { isArrowKey, movePoint, scaleNumber } from "@/utils/helpers";
+import { processCsv } from "@/utils/matrixUtils";
+import { scaleNumber } from "@/utils/helpers";
 
 import {
 	DEFAULT_RADIUS,
 	DEFAULT_OPACITY,
 	DEFAULT_MAX_OPACITY,
+	DEFAULT_CURRENT_LAYER,
+	DEFAULT_GRADIENT,
 } from "@/constants/constants";
 
+import { ColorsArray } from "./components/colors-array/colors-array";
 import { ImageLayout } from "./components/image-layout/image-layout";
 import { TextMatrix } from "./components/text-matrix/text-matrix";
 
 import styles from "./home.module.scss";
-
-// let heatmap: HeatMap;
+import { transformGradientToRecord } from "@/utils/colorArrayHelpers";
 
 function SimpleSlider({
 	min,
@@ -99,11 +86,11 @@ export function Home() {
 
 	const [heatmap, setHeatmap] = useState<HeatMap>();
 
-	const [heatmapSettings, setHeatmapSettings] = useState<IHeatmapSettings>({
-		radius: DEFAULT_RADIUS,
-		opacity: DEFAULT_OPACITY,
-		maxOpacity: DEFAULT_MAX_OPACITY,
-	} as IHeatmapSettings);
+	// const [heatmapSettings, updateHeatmapSettings] = useState<IHeatmapSettings>({
+	// 	radius: DEFAULT_RADIUS,
+	// 	opacity: DEFAULT_OPACITY,
+	// 	maxOpacity: DEFAULT_MAX_OPACITY,
+	// } as IHeatmapSettings);
 
 	const [heatmapInit, setHeatmapInit] = useState<{
 		container: HTMLDivElement;
@@ -117,36 +104,54 @@ export function Home() {
 	);
 
 	const dispatch = useAppDispatch();
-	const { currentKey, setupState, matrixImageMapping } = useAppSelector(
+	const { heatmapSettings, setupState, matrixImageMapping } = useAppSelector(
 		(state) => state.setup
 	);
 
 	const handleLayer = (value: number) => {
-		setHeatmapSettings((state) => ({
-			...state,
-			currentLayer: value,
-		}));
+		dispatch(
+			updateHeatmapSettings({
+				...heatmapSettings,
+				currentLayer: value,
+			})
+		);
 	};
 
 	const handleRadius = (value: number) => {
-		setHeatmapSettings((state) => ({
-			...state,
-			radius: value,
-		}));
+		dispatch(
+			updateHeatmapSettings({
+				...heatmapSettings,
+				radius: value,
+			})
+		);
 	};
 
 	const handleOpacity = (value: number) => {
-		setHeatmapSettings((state) => ({
-			...state,
-			opacity: value,
-		}));
+		dispatch(
+			updateHeatmapSettings({
+				...heatmapSettings,
+				opacity: value,
+			})
+		);
 	};
 
 	const handleMaxOpacity = (value: number) => {
-		setHeatmapSettings((state) => ({
-			...state,
-			maxOpacity: value,
-		}));
+		dispatch(
+			updateHeatmapSettings({
+				...heatmapSettings,
+				maxOpacity: value,
+			})
+		);
+	};
+
+	const updateGradient = (gradient: IGradient[]) => {
+		// console.log(gradient);
+		dispatch(
+			updateHeatmapSettings({
+				...heatmapSettings,
+				gradient,
+			})
+		);
 	};
 
 	const [canvasContext, setCanvasContext] =
@@ -162,10 +167,6 @@ export function Home() {
 					container: heatmapInit.container,
 					width: heatmapInit.width,
 					height: heatmapInit.height,
-					gradient: {
-						0.1: "pink",
-						0.8: "purple",
-					},
 				})
 			);
 		}
@@ -191,9 +192,8 @@ export function Home() {
 
 			heatmap.renderer._updateGradient({
 				...heatmap.config,
-				gradient: heatmapSettings.gradient,
+				gradient: transformGradientToRecord(heatmapSettings.gradient),
 			});
-			// heatmap.config.gradient = heatmapSettings.colors;
 
 			heatmap.setData({
 				max: heatmapData[heatmapSettings.currentLayer].maxKeyPresses,
@@ -208,21 +208,19 @@ export function Home() {
 			dispatch(setMatrixImageMapping(isConfig.matrixImageMapping));
 			dispatch(setSetupState("logfileUpload"));
 
-			//setDefaultParameters
 			const configHeatmapSettings = isConfig.heatmapSettings;
 			if (configHeatmapSettings) {
-				setHeatmapSettings(configHeatmapSettings);
+				dispatch(updateHeatmapSettings(configHeatmapSettings));
 			} else {
-				setHeatmapSettings({
-					radius: DEFAULT_RADIUS,
-					opacity: DEFAULT_OPACITY,
-					maxOpacity: DEFAULT_MAX_OPACITY,
-					currentLayer: 0,
-					gradient: {
-						0.1: "violet",
-						0.9: "red",
-					},
-				});
+				dispatch(
+					updateHeatmapSettings({
+						radius: DEFAULT_RADIUS,
+						opacity: DEFAULT_OPACITY,
+						maxOpacity: DEFAULT_MAX_OPACITY,
+						currentLayer: DEFAULT_CURRENT_LAYER,
+						gradient: DEFAULT_GRADIENT,
+					})
+				);
 			}
 		}
 	}, []);
@@ -280,115 +278,91 @@ export function Home() {
 		}
 	}, [heatmapData]);
 
-	const checkArrowPress = useCallback(
-		(event: KeyboardEvent) => {
-			if (setupState !== "imageUpload") return;
-			const keycode = event.code;
-
-			if (!isArrowKey(keycode)) return;
-
-			if (!currentKey) return;
-
-			if (!canvasContext) return;
-
-			movePoint(
-				keycode,
-				() => {
-					dispatch(moveCurrentKeyUp(currentKey));
-					movePointUp(canvasContext, currentKey.x, currentKey.y);
-				},
-				() => {
-					dispatch(moveCurrentKeyDown(currentKey));
-					movePointDown(canvasContext, currentKey.x, currentKey.y);
-				},
-				() => {
-					dispatch(moveCurrentKeyLeft(currentKey));
-					movePointLeft(canvasContext, currentKey.x, currentKey.y);
-				},
-				() => {
-					dispatch(moveCurrentKeyRight(currentKey));
-					movePointRight(canvasContext, currentKey.x, currentKey.y);
-				}
-			);
-		},
-		[canvasContext, currentKey.x, currentKey.y, matrixImageMapping, setupState]
-	);
-
-	useEffect(() => {
-		window.addEventListener("keydown", checkArrowPress);
-
-		return () => {
-			window.removeEventListener("keydown", checkArrowPress);
-		};
-	}, [canvasContext, currentKey, matrixImageMapping, setupState]);
-
 	return (
 		<div className={styles.home}>
 			{renderImageLayout && (
 				<>
-					<ImageLayout
-						canvasContext={canvasContext}
-						setCanvasContext={setCanvasContext}
-						setConfig={setConfig}
-						keyboardOverlayRef={keyboardOverlayRef}
-						updateHeatmapConfig={updateHeatmapConfig}
-					/>
-					{renderControls && (
-						<>
-							<div className={styles.controls}>
-								<div className={styles.item}>
-									<div className={styles["text__items"]}>
-										<p>radius</p>
-										<p>{heatmapSettings.radius}</p>
+					<div className={styles["view-heatmap"]}>
+						{renderControls && (
+							<div className={styles["controls-container"]}>
+								<div className={styles.controls}>
+									<div className={styles.item}>
+										<div className={styles["text__items"]}>
+											<p className={styles["controls__text"]}>radius</p>
+											<p className={styles["controls__text"]}>
+												{heatmapSettings.radius}
+											</p>
+										</div>
+										<SimpleSlider
+											min={10}
+											max={100}
+											value={heatmapSettings.radius}
+											onChange={handleRadius}
+										/>
 									</div>
-									<SimpleSlider
-										min={10}
-										max={100}
-										value={heatmapSettings.radius}
-										onChange={handleRadius}
-									/>
-								</div>
-								<div className={styles.item}>
-									<div className={styles["text__items"]}>
-										<p>opacity</p>
-										<p>{heatmapSettings.opacity}</p>
+									<div className={styles.item}>
+										<div className={styles["text__items"]}>
+											<p className={styles["controls__text"]}>opacity</p>
+											<p className={styles["controls__text"]}>
+												{heatmapSettings.opacity}
+											</p>
+										</div>
+										<SimpleSlider
+											min={0}
+											max={1}
+											step={0.01}
+											value={heatmapSettings.opacity}
+											onChange={handleOpacity}
+										/>
 									</div>
-									<SimpleSlider
-										min={0}
-										max={1}
-										step={0.01}
-										value={heatmapSettings.opacity}
-										onChange={handleOpacity}
-									/>
-								</div>
-								<div className={styles.item}>
-									<div className={styles["text__items"]}>
-										<p>fingers opacity</p>
-										<p>{heatmapSettings.maxOpacity}</p>
+									<div className={styles.item}>
+										<div className={styles["text__items"]}>
+											<p className={styles["controls__text"]}>
+												fingers opacity
+											</p>
+											<p className={styles["controls__text"]}>
+												{heatmapSettings.maxOpacity}
+											</p>
+										</div>
+										<SimpleSlider
+											min={0}
+											max={1}
+											step={0.01}
+											value={heatmapSettings.maxOpacity}
+											onChange={handleMaxOpacity}
+										/>
 									</div>
-									<SimpleSlider
-										min={0}
-										max={1}
-										step={0.01}
-										value={heatmapSettings.maxOpacity}
-										onChange={handleMaxOpacity}
-									/>
-								</div>
-								<div className={styles.item}>
-									<div className={styles["text__items"]}>
-										<p>layer</p>
-										<p>{heatmapSettings.currentLayer}</p>
+									<div className={styles.item}>
+										<div className={styles["text__items"]}>
+											<p className={styles["controls__text"]}>layer</p>
+											<p className={styles["controls__text"]}>
+												{heatmapSettings.currentLayer == heatmapData.length - 1
+													? "combined"
+													: heatmapSettings.currentLayer}
+											</p>
+										</div>
+										<SimpleSlider
+											min={0}
+											max={heatmapData.length - 1}
+											value={heatmapSettings.currentLayer}
+											onChange={handleLayer}
+										/>
 									</div>
-									<SimpleSlider
-										min={0}
-										max={heatmapData.length - 1}
-										value={heatmapSettings.currentLayer}
-										onChange={handleLayer}
+									<ColorsArray
+										gradient={heatmapSettings.gradient}
+										updateGradient={updateGradient}
 									/>
 								</div>
 							</div>
-						</>
-					)}
+						)}
+						<ImageLayout
+							canvasContext={canvasContext}
+							setCanvasContext={setCanvasContext}
+							setConfig={setConfig}
+							keyboardOverlayRef={keyboardOverlayRef}
+							updateHeatmapConfig={updateHeatmapConfig}
+						/>
+					</div>
 					{!renderTextArea && (
 						<div className={`${styles["file-input"]} noselect`}>
 							<input
