@@ -1,0 +1,37 @@
+.colors-array {
+	width: 100%;
+}
+
+.color-container {
+	// background-color: var(--background-color-dark);
+	border-radius: 0 0 8px 8px;
+	direction: rtl;
+	max-height: 200px;
+	overflow: hidden;
+	overflow-y: auto;
+	position: relative;
+	width: 100%;
+}
+
+.add-color-container {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	padding: 0 4px;
+}
+
+.add-color {
+	opacity: 0.5;
+
+	&:hover {
+		cursor: pointer;
+		opacity: 1;
+	}
+}
+
+.color-picker-container {
+	bottom: -224px;
+	left: 24px;
+	margin-top: 24px;
+	position: absolute;
+}
