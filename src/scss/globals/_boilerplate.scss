@@ -140,3 +140,33 @@ button {
 	font-weight: bold;
 	margin: 0;
 }
+
+.button {
+	cursor: pointer;
+	font-size: 20px;
+}
+
+* {
+	scrollbar-color: #8585ad #2f2f37;
+	scrollbar-width: thin;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+	height: 8px;
+	width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #2f2f37;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #4a5a75;
+	border: 0 none #fff;
+	border-radius: 0;
+}
+
+section {
+	padding: 48px 0;
+}
