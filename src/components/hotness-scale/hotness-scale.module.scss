@@ -1,0 +1,37 @@
+.hotness-container {
+	align-items: center;
+	background-color: var(--background-color-dark);
+	border-radius: 8px;
+	box-shadow: 0 4px 4px rgb(0 0 0 / 24%), 0 12px 24px rgb(0 0 0 / 24%);
+	color: var(--accent-color-white);
+	display: flex;
+	flex-direction: column;
+	height: 48px;
+	justify-content: center;
+	padding: 8px;
+	width: 200px;
+}
+
+.title {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.hotness-scale {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	justify-content: space-between;
+}
+
+.hotness {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.text {
+	margin-bottom: 0;
+}
