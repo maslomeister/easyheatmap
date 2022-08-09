@@ -35,10 +35,6 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
 
 ## Examples
 
-Using this tool you can highly customize look of your heatmap very easily.
-
-Here are few examples from me:
-
 ![Example one][example1]
 ![Example two][example2]
 ![Example three][example3]
