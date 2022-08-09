@@ -42,7 +42,10 @@ export function Navbar() {
 
 	return (
 		<div className={styles.navbar}>
-			<a className={`${styles.logo}  noselect`} href="/">
+			<a
+				className={`${styles.logo}  noselect`}
+				href="//maslomeister.github.io/easyheatmap"
+			>
 				<Logo width={48} height={48} />
 				<div className={styles["logo-text"]}>
 					Easy heatmap <span className={styles["log-sub-text"]}>for qmk</span>
