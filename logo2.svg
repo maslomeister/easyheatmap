@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(0.9375,0,0,0.9375,1.5,1.5)">
+        <rect x="0" y="0" width="48" height="48" style="fill:rgb(56,56,56);stroke:white;stroke-width:1.02px;"/>
+    </g>
+    <path d="M9,39L9,6L7,6L7,41L42,41L42,39L9,39Z" style="fill:rgb(70,172,255);fill-rule:nonzero;"/>
+    <g>
+        <circle cx="14" cy="11" r="2" style="fill:white;"/>
+        <circle cx="32" cy="11" r="2" style="fill:white;"/>
+        <circle cx="39" cy="11" r="2" style="fill:white;"/>
+        <circle cx="23" cy="11" r="4" style="fill:white;"/>
+        <circle cx="14" cy="33" r="2" style="fill:white;"/>
+        <circle cx="30" cy="33" r="2" style="fill:white;"/>
+        <circle cx="22" cy="33" r="3" style="fill:white;"/>
+        <circle cx="38" cy="33" r="4" style="fill:white;"/>
+        <circle cx="14" cy="22" r="2" style="fill:white;"/>
+        <circle cx="39" cy="22" r="2" style="fill:white;"/>
+        <circle cx="32" cy="22" r="3" style="fill:white;"/>
+    </g>
+</svg>
