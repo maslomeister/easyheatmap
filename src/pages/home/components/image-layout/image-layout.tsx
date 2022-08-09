@@ -315,7 +315,7 @@ export function ImageLayout({
 						/>
 						<div
 							style={{
-								right: "124px",
+								right: "100px",
 								top: "24px",
 								position: "absolute",
 							}}
