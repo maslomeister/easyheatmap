@@ -4,6 +4,10 @@
 	"version": "0.1.0",
 	"homepage": "https://maslomeister.github.io/easyheatmap",
 	"type": "module",
+	"engines": {
+		"npm": ">=8.15.0",
+		"node": ">=18.7.0"
+	},
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
