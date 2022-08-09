@@ -2,6 +2,7 @@
 	"name": "heatmap_generator",
 	"private": true,
 	"version": "0.1.0",
+	"homepage": "https://maslomeister.github.io/easyheatmap",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
