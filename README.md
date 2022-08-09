@@ -45,6 +45,13 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
 
 ## Local usage
 
+```
+Prerequisites:
+
+node >= 18.7.0
+npm >= 8.15.0
+```
+
 1. Clone the repo
    ```sh
    git clone https://github.com/your_username_/Project-Name.git
