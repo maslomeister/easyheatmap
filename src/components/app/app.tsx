@@ -17,7 +17,7 @@ export function App() {
 			<Navbar />
 			<div className={styles.content}>
 				<Routes>
-					<Route path="/" element={<Home />} />
+					<Route path="/easyheatmap" element={<Home />} />
 					<Route path="/about" element={<About />} />
 					<Route path="/how-to-use" element={<HowToUse />} />
 					<Route path="/settings" element={<Settings />} />
