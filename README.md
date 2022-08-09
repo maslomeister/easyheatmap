@@ -13,7 +13,7 @@
   <p align="center">
     Easily create beautiful heatmaps for your qmk keyboard
     <br />
-    <a href="https://easyheatmap.netlify.app/">Website</a>
+    <a href="https://maslomeister.github.io/easyheatmap/">Website</a>
     ·
     <a href="https://github.com/maslomeister/easyheatmap/issues">Report Bug</a>
     ·
