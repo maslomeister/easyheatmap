@@ -9,6 +9,7 @@
 	height: 36px;
 	justify-content: space-between;
 	opacity: 0;
+	padding: 0 8px 0 0;
 	position: relative;
 	text-align: center;
 	width: 100%;
@@ -41,11 +42,6 @@
 	width: 18px;
 }
 
-.color-picker {
-	position: absolute;
-	top: 0;
-}
-
 .close {
 	height: 24px;
 	opacity: 0.3;
@@ -76,4 +72,49 @@
 
 .close::after {
 	transform: rotate(-45deg);
+}
+
+.duplicate {
+	border: 2px solid transparent;
+	border-bottom: 4px solid transparent;
+	box-shadow: 0 0 0 2px, inset 0 -2px 0 0;
+	box-sizing: border-box;
+	display: block;
+	height: 10px;
+	margin-left: -4px;
+	margin-top: 4px;
+	opacity: 0.5;
+	position: relative;
+	transform: scale(var(--ggs, 1));
+	width: 10px;
+}
+
+.duplicate:hover {
+	cursor: pointer;
+	opacity: 1;
+}
+
+.duplicate::after,
+.duplicate::before {
+	box-sizing: border-box;
+	content: "";
+	display: block;
+	position: absolute;
+}
+
+.duplicate::before {
+	background: currentColor;
+	bottom: -2px;
+	height: 6px;
+	left: 2px;
+	width: 2px;
+}
+
+.duplicate::after {
+	border-right: 2px solid;
+	border-top: 2px solid;
+	height: 14px;
+	right: -8px;
+	top: -8px;
+	width: 14px;
 }

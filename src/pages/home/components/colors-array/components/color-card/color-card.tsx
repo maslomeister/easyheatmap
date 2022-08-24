@@ -8,6 +8,7 @@ interface IColorCard {
 	item: IGradient;
 	handle: boolean;
 	removeItem: (id: string) => void;
+	duplicateItem: (id: string) => void;
 	setShowColorPicker?: (item: IGradient) => void;
 }
 
@@ -15,6 +16,7 @@ export function ColorCard({
 	id,
 	item,
 	removeItem,
+	duplicateItem,
 	setShowColorPicker,
 }: IColorCard) {
 	const handleItemRemove = () => {
@@ -23,6 +25,10 @@ export function ColorCard({
 		}
 
 		removeItem(id);
+	};
+
+	const handleItemDuplicate = () => {
+		duplicateItem(id);
 	};
 
 	const {
@@ -62,6 +68,7 @@ export function ColorCard({
 					}
 				}}
 			/>
+			<a className={styles.duplicate} onClick={handleItemDuplicate} />
 			<a className={styles.close} onClick={handleItemRemove} />
 		</div>
 	);

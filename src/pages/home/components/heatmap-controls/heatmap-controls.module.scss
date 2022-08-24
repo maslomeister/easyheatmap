@@ -1,0 +1,29 @@
+.controls {
+	background-color: var(--background-color-dark);
+	box-shadow: 0 4px 4px rgb(0 0 0 / 24%), 0 12px 24px rgb(0 0 0 / 24%);
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	height: 524px;
+	padding: 12px 24px 24px;
+}
+
+.text__items {
+	display: flex;
+	gap: 24px;
+	justify-content: space-between;
+}
+
+// .item__item {
+// 	flex: 1 1 0;
+// 	text-align: start;
+// 	width: 160px;
+// }
+
+.controls__text {
+	font-size: 14px;
+}
+
+p {
+	margin-bottom: 4px;
+}

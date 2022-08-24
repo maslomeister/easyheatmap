@@ -22,6 +22,7 @@ import { HexColorPicker } from "react-colorful";
 
 import {
 	removeColorWithId,
+	duplicateColor,
 	addNewColor,
 	getNewValues,
 	changeColor,
@@ -37,13 +38,11 @@ interface IColorsArray {
 	showColorPicker: IGradient;
 	setShowColorPicker: (item: IGradient) => void;
 	updateGradient: (gradient: IGradient[]) => void;
-	saveScreenshot: () => void;
 }
 
 export function ColorsArray({
 	gradient,
 	updateGradient,
-	saveScreenshot,
 	showColorPicker,
 	setShowColorPicker,
 }: IColorsArray) {
@@ -55,10 +54,6 @@ export function ColorsArray({
 
 	const handleHideColorPicker = () => {
 		setShowColorPicker({} as IGradient);
-	};
-
-	const handleSaveScreenshot = () => {
-		saveScreenshot();
 	};
 
 	useEffect(() => {
@@ -83,6 +78,9 @@ export function ColorsArray({
 	};
 	const removeItem = (id: string) => {
 		updateGradient(removeColorWithId(gradient, id));
+	};
+	const duplicateItem = (id: string) => {
+		updateGradient(duplicateColor(gradient, id));
 	};
 
 	const handleDragStart = (event: DragStartEvent) => {
@@ -127,6 +125,7 @@ export function ColorsArray({
 								item={item}
 								handle={true}
 								removeItem={removeItem}
+								duplicateItem={duplicateItem}
 								setShowColorPicker={handleShowColorPicker}
 							/>
 						))}
@@ -137,6 +136,7 @@ export function ColorsArray({
 									item={activeItem}
 									handle={true}
 									removeItem={removeItem}
+									duplicateItem={duplicateItem}
 								/>
 							) : (
 								<></>
@@ -145,16 +145,13 @@ export function ColorsArray({
 					</SortableContext>
 				</div>
 
-				<div
-					className={styles["save-screenshot"]}
-					onClick={handleSaveScreenshot}
-				>
-					<p>save screenshot</p>
-				</div>
-
 				{showColorPicker.color && (
 					<div className={styles["color-picker-container"]}>
-						<HexColorPicker color={showColorPicker.color} onChange={setColor} />
+						<HexColorPicker
+							className="small"
+							color={showColorPicker.color}
+							onChange={setColor}
+						/>
 
 						<p
 							className={styles["color-picker__close"]}
