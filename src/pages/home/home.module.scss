@@ -13,16 +13,6 @@
 	padding-bottom: 32px;
 }
 
-.controls-container {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	justify-content: start;
-	left: 18px;
-	position: fixed;
-	top: 200px;
-}
-
 .controls {
 	background-color: var(--background-color-dark);
 	box-shadow: 0 4px 4px rgb(0 0 0 / 24%), 0 12px 24px rgb(0 0 0 / 24%);

@@ -71,6 +71,7 @@
 			format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
+/* stylelint-disable-next-line selector-max-id */
 #root {
 	height: 100vh;
 }
@@ -169,4 +170,13 @@ button {
 
 section {
 	padding: 48px 0;
+}
+
+.react-colorful.small {
+	height: 124px;
+	width: 160px;
+}
+
+.small.react-colorful__hue {
+	height: 20px;
 }
