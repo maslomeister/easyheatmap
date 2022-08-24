@@ -51,3 +51,7 @@ interface IHeatMapData {
 	maxKeyPresses: number;
 	dataPoints: IDataPoints[];
 }
+
+interface IScreenshotSettings {
+	showHotnessScale: boolean;
+}

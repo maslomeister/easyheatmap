@@ -1,0 +1,37 @@
+.controls {
+	background-color: var(--background-color-dark);
+	box-shadow: 0 4px 4px rgb(0 0 0 / 24%), 0 12px 24px rgb(0 0 0 / 24%);
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	height: 524px;
+	justify-content: space-between;
+	padding: 12px 24px 24px;
+}
+
+.title {
+	padding-bottom: 8px;
+}
+
+.item-checkbox {
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+}
+
+// .title .controls__text {
+// 	font-size: 14px;
+// }
+
+// p {
+// 	margin-bottom: 4px;
+// }
+
+.save-screenshot {
+	opacity: 0.6;
+}
+
+.save-screenshot:hover {
+	cursor: pointer;
+	opacity: 1;
+}
