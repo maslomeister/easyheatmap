@@ -5,6 +5,15 @@ function round(value: number, precision: number) {
 	return Math.round(value * multiplier) / multiplier;
 }
 
+const insert = (arr: IGradient[], index: number, newItem: IGradient) => [
+	// part of the array before the specified index
+	...arr.slice(0, index),
+	// inserted item
+	newItem,
+	// part of the array after the specified index
+	...arr.slice(index),
+];
+
 export function transformGradientToRecord(
 	gradientArray: IGradient[]
 ): Record<number, string> {
@@ -46,6 +55,41 @@ export function addNewColor(gradient: IGradient[], color: string): IGradient[] {
 	return newGradient;
 }
 
+// export function copyColor(
+// 	gradient: IGradient[],
+// 	newColor: string,
+// 	id: string
+// ): IGradient[] {
+// 	const length = gradient.length;
+// 	const newGradient: IGradient[] = [];
+
+// 	if (length) {
+// 		for (let i = 0; i <= length; i++) {
+// 			if (i === 0) {
+// 				const color = gradient[0].id === id ? newColor : gradient[0].color;
+// 				newGradient.push({
+// 					id: gradient[0].id,
+// 					value: 0,
+// 					color: color,
+// 				});
+// 			} else if (i !== length) {
+// 				const color = gradient[i].id === id ? newColor : gradient[i].color;
+// 				newGradient.push({
+// 					id: gradient[i].id,
+// 					value: round(i / length, 1),
+// 					color: color,
+// 				});
+// 			} else {
+// 				newGradient.push({ id: uuidv4(), value: 0.9, color: newColor });
+// 			}
+// 		}
+// 	} else {
+// 		newGradient.push({ id: uuidv4(), value: 0.8, color: color });
+// 	}
+
+// 	return newGradient;
+// }
+
 export function removeColorWithId(
 	gradient: IGradient[],
 	id: string
@@ -78,6 +122,19 @@ export function removeColorWithId(
 	}
 
 	return newGradient;
+}
+
+export function duplicateColor(gradient: IGradient[], id: string): IGradient[] {
+	const colorToDuplicate = gradient.filter((item) => item.id === id);
+
+	const colorIndex = gradient
+		.map((item) => item.id)
+		.indexOf(colorToDuplicate[0].id);
+
+	const newColor = { id: uuidv4(), value: 0, color: colorToDuplicate[0].color };
+	const newGradient = [...gradient];
+
+	return getNewValues(insert(newGradient, colorIndex, newColor));
 }
 
 export function getNewValues(gradient: IGradient[]): IGradient[] {
