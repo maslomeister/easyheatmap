@@ -11,6 +11,7 @@ import {
 export interface IAppState {
 	matrixArray: string[];
 	nextKey: string;
+	keylogFileLoading: boolean;
 	currentKey: ICurrentKey;
 	textRepresentation: string;
 	textAreaSize: ITextAreaSize;
@@ -19,12 +20,13 @@ export interface IAppState {
 	matrixImageMapping: IMatrixImageMapping[];
 	heatmapSettings: IHeatmapSettings;
 	heatmapData: IHeatMapData[];
-	showHotnessScale: boolean;
+	screenshotSetting: IScreenshotSettings;
 }
 
 const initialState: IAppState = {
 	matrixArray: [],
 	nextKey: "",
+	keylogFileLoading: false,
 	currentKey: { keycode: "", x: 0, y: 0 },
 	textRepresentation: "",
 	textAreaSize: { width: 0, height: 0 },
@@ -42,7 +44,9 @@ const initialState: IAppState = {
 		maxOpacity: DEFAULT_MAX_OPACITY,
 		gradient: DEFAULT_GRADIENT,
 	},
-	showHotnessScale: false,
+	screenshotSetting: {
+		showHotnessScale: true,
+	},
 	heatmapData: [],
 };
 
@@ -56,6 +60,9 @@ export const setupReducer = createSlice({
 		},
 		setNextKey: (state, key: PayloadAction<string>) => {
 			state.nextKey = key.payload;
+		},
+		setKeylogFileLoading: (state, loadingState: PayloadAction<boolean>) => {
+			state.keylogFileLoading = loadingState.payload;
 		},
 		setMatrixArray: (state, matrixArray: PayloadAction<string[]>) => {
 			return (state = {
@@ -173,12 +180,19 @@ export const setupReducer = createSlice({
 				}),
 			});
 		},
+		setScreenshotSettings: (
+			state,
+			screenshotSetting: PayloadAction<IScreenshotSettings>
+		) => {
+			state.screenshotSetting = screenshotSetting.payload;
+		},
 	},
 });
 
 export const {
 	setCurrentKey,
 	setNextKey,
+	setKeylogFileLoading,
 	setMatrixArray,
 	setTextRepresentation,
 	setTextAreaSize,
@@ -192,6 +206,7 @@ export const {
 	moveCurrentKeyRight,
 	updateHeatmapSettings,
 	setHeatmapData,
+	setScreenshotSettings,
 } = setupReducer.actions;
 
 export default setupReducer.reducer;
