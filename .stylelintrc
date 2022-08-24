@@ -8,6 +8,7 @@
 			}
 		],
 		"indentation": null,
-		"number-leading-zero": null
+		"number-leading-zero": null,
+		"declaration-empty-line-before": "never"
 	}
 }
