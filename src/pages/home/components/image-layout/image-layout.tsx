@@ -61,6 +61,7 @@ export function ImageLayout({
 		matrixImageMapping,
 		currentKey,
 		setupState,
+		screenshotSetting,
 	} = useAppSelector((state) => state.setup);
 	const keyboardImageRef = useRef<HTMLCanvasElement>(null);
 
@@ -277,15 +278,15 @@ export function ImageLayout({
 				<div
 					className={styles["keyboard__layer"]}
 					style={{
-						width: keyboardImage.width + 160,
-						height: keyboardImage.height + 200,
+						width: keyboardImage.width + 140,
+						height: keyboardImage.height + 124,
 					}}
 				>
 					<div
 						className={styles["canvas--centered"]}
 						style={{
-							width: keyboardImage.width + 160,
-							height: keyboardImage.height + 200,
+							width: keyboardImage.width + 140,
+							height: keyboardImage.height + 124,
 							pointerEvents:
 								setupState === "logfileUpload" ? "none" : undefined,
 						}}
@@ -295,8 +296,8 @@ export function ImageLayout({
 					>
 						<canvas
 							className={styles["canvas--centered"]}
-							width={keyboardImage.width + 160}
-							height={keyboardImage.height + 200}
+							width={keyboardImage.width + 140}
+							height={keyboardImage.height + 124}
 							style={{
 								zIndex: "1",
 							}}
@@ -315,12 +316,12 @@ export function ImageLayout({
 						/>
 						<div
 							style={{
-								right: "100px",
-								top: "24px",
+								right: "90px",
 								position: "absolute",
+								zIndex: "1",
 							}}
 						>
-							<HotnessScale />
+							{screenshotSetting.showHotnessScale && <HotnessScale />}
 						</div>
 					</div>
 				</div>
