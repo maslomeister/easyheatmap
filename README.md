@@ -33,7 +33,7 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
 
 <!-- USAGE EXAMPLES -->
 
-## Examples
+## Examples of result heatmap
 
 ![Example one][example1]
 ![Example two][example2]
