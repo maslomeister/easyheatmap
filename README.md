@@ -1,5 +1,3 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-
 <a name="readme-top"></a>
 
 <br />
@@ -18,6 +16,14 @@
     <a href="https://github.com/maslomeister/easyheatmap/issues">Report Bug</a>
     ·
     <a href="https://github.com/maslomeister/easyheatmap/issues">Request Feature</a>
+  </p>
+  <p align="center">
+    <a href="https://github.com/maslomeister/easyheatmap/actions/workflows/push.yaml">
+      <img                          
+         src="https://github.com/maslomeister/easyheatmap/actions/workflows/push.yaml/badge.svg"
+         alt="Build and deploy"/>
+    </a>
+    
   </p>
 </div>
 
