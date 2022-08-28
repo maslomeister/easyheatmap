@@ -39,7 +39,12 @@ This tool will allow you to create heatmap for you qmk keyboard in a few easy st
 
 <!-- USAGE EXAMPLES -->
 
-## Examples of result heatmap
+## Example of usage
+> In the first half of the video i'm setting up relation between keyboard layout image and keymap, you'll need to do it only once, after that is done all of the settings are saved to local storage of the browser
+
+https://user-images.githubusercontent.com/64310545/187079694-8606c780-125d-4ff8-9b39-ea8faea48e8a.mp4
+
+## Examples of resulting heatmaps
 
 ![Example one][example1]
 ![Example two][example2]
