@@ -32,7 +32,7 @@ import styles from "./home.module.scss";
 export function Home() {
 	const keyboardOverlayRef = useRef<HTMLDivElement>(null);
 
-	const [heatmap, setHeatmap] = useState<HeatMap>();
+	const heatmapRef = useRef<HeatMap>();
 
 	const [heatmapInit, setHeatmapInit] = useState<{
 		container: HTMLDivElement;
@@ -46,37 +46,34 @@ export function Home() {
 	);
 
 	const dispatch = useAppDispatch();
-	const { heatmapData, heatmapSettings, setupState } = useAppSelector(
-		(state) => state.setup
-	);
+	const { heatmapData, heatmapSettings, setupState, loadingCsv } =
+		useAppSelector((state) => state.setup);
 
 	const [canvasContext, setCanvasContext] =
 		useState<CanvasRenderingContext2D>();
 
 	// init heatmapjs
 	useEffect(() => {
-		if (!heatmap && heatmapInit) {
-			setHeatmap(
-				new HeatMap({
-					container: heatmapInit.container,
-					width: heatmapInit.width,
-					height: heatmapInit.height,
-				})
-			);
+		if (!heatmapRef.current && heatmapInit) {
+			heatmapRef.current = new HeatMap({
+				container: heatmapInit.container,
+				width: heatmapInit.width,
+				height: heatmapInit.height,
+			});
 		}
 	}, [heatmapInit]);
 
 	useEffect(() => {
 		if (
-			heatmap &&
+			heatmapRef.current &&
 			heatmapData[heatmapSettings.currentLayer] &&
 			heatmapSettings
 		) {
 			setConfig({ ...isConfig, heatmapSettings });
-			heatmap.store.radius = heatmapSettings.radius;
-			heatmap.renderer.canvas.style.opacity =
+			heatmapRef.current.store.radius = heatmapSettings.radius;
+			heatmapRef.current.renderer.canvas.style.opacity =
 				heatmapSettings.opacity.toString();
-			heatmap.renderer.maxOpacity = scaleNumber(
+			heatmapRef.current.renderer.maxOpacity = scaleNumber(
 				heatmapSettings.maxOpacity,
 				0,
 				1,
@@ -84,12 +81,12 @@ export function Home() {
 				255
 			);
 
-			heatmap.renderer._updateGradient({
-				...heatmap.config,
+			heatmapRef.current.renderer._updateGradient({
+				...heatmapRef.current.config,
 				gradient: transformGradientToRecord(heatmapSettings.gradient),
 			});
 
-			heatmap.setData({
+			heatmapRef.current.setData({
 				max: heatmapData[heatmapSettings.currentLayer].maxKeyPresses,
 				data: heatmapData[heatmapSettings.currentLayer].dataPoints,
 			});
@@ -159,6 +156,15 @@ export function Home() {
 				</div>
 			)}
 			{renderTextArea && <TextMatrix />}
+			{loadingCsv && (
+				<div className={styles["heatmap-loader"]}>
+					<div className={styles["lds-ripple"]}>
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
