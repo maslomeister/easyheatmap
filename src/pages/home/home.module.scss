@@ -6,6 +6,18 @@
 	min-height: 100%;
 }
 
+.heatmap-loader {
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	height: 100%;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+}
+
 .layout-image-container {
 	display: flex;
 	justify-content: center;
@@ -47,4 +59,61 @@
 
 p {
 	margin-bottom: 4px;
+}
+
+.lds-ripple {
+	display: inline-block;
+	height: 260px;
+	position: relative;
+	width: 260px;
+
+	div {
+		animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+		border: 4px solid var(--accent-color-bright-blue);
+		border-radius: 50%;
+		opacity: 1;
+		position: absolute;
+	}
+
+	div:nth-child(2) {
+		animation-delay: -0.3s;
+	}
+
+	div:nth-child(3) {
+		animation-delay: -0.6s;
+	}
+}
+
+@keyframes lds-ripple {
+	0% {
+		height: 0;
+		left: 130px;
+		opacity: 0;
+		top: 130px;
+		width: 0;
+	}
+
+	4.9% {
+		height: 0;
+		left: 130px;
+		opacity: 0;
+		top: 130px;
+		width: 0;
+	}
+
+	5% {
+		height: 0;
+		left: 130px;
+		opacity: 1;
+		top: 130px;
+		width: 0;
+	}
+
+	100% {
+		height: 260px;
+		left: 0;
+		opacity: 0;
+		top: 0;
+		width: 260px;
+	}
 }

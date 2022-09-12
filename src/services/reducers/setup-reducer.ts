@@ -21,6 +21,7 @@ export interface IAppState {
 	heatmapSettings: IHeatmapSettings;
 	heatmapData: IHeatMapData[];
 	screenshotSetting: IScreenshotSettings;
+	loadingCsv: boolean;
 }
 
 const initialState: IAppState = {
@@ -48,12 +49,12 @@ const initialState: IAppState = {
 		showHotnessScale: true,
 	},
 	heatmapData: [],
+	loadingCsv: false,
 };
 
 export const setupReducer = createSlice({
 	name: "setup",
 	initialState,
-	// The `reducers` field lets us define reducers and generate associated actions
 	reducers: {
 		setCurrentKey: (state, key: PayloadAction<ICurrentKey>) => {
 			state.currentKey = key.payload;
@@ -186,6 +187,9 @@ export const setupReducer = createSlice({
 		) => {
 			state.screenshotSetting = screenshotSetting.payload;
 		},
+		setLoadingCsv: (state, screenshotSetting: PayloadAction<boolean>) => {
+			state.loadingCsv = screenshotSetting.payload;
+		},
 	},
 });
 
@@ -207,6 +211,7 @@ export const {
 	updateHeatmapSettings,
 	setHeatmapData,
 	setScreenshotSettings,
+	setLoadingCsv,
 } = setupReducer.actions;
 
 export default setupReducer.reducer;

@@ -4,7 +4,10 @@ import Papa from "papaparse";
 import { Logo } from "../../assets/icons/logo";
 
 import { useAppDispatch, useAppSelector } from "@/services/hooks";
-import { setHeatmapData } from "@/services/reducers/setup-reducer";
+import {
+	setHeatmapData,
+	setLoadingCsv,
+} from "@/services/reducers/setup-reducer";
 import { processCsv } from "@/utils/matrixUtils";
 
 import styles from "./navbar.module.scss";
@@ -22,6 +25,7 @@ export function Navbar() {
 		const reader = new FileReader();
 		const file = event.target.files[0];
 
+		dispatch(setLoadingCsv(true));
 		reader.onload = () => {
 			Papa.parse<[]>(file, {
 				worker: true,
@@ -29,6 +33,7 @@ export function Navbar() {
 				skipEmptyLines: "greedy",
 
 				complete: function (results) {
+					dispatch(setLoadingCsv(false));
 					event.target.value = "";
 
 					dispatch(
